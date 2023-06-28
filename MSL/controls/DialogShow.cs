@@ -1,6 +1,4 @@
 ﻿using HandyControl.Controls;
-using System;
-using System.Runtime.CompilerServices;
 
 namespace MSL.controls
 {

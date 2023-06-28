@@ -1,4 +1,5 @@
 ﻿using HandyControl.Controls;
+using HandyControl.Themes;
 using MSL.controls;
 using MSL.pages;
 using Newtonsoft.Json.Linq;
@@ -7,25 +8,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Management;
 using System.Net;
-using System.Runtime.InteropServices;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Xml.Linq;
 using Brush = System.Windows.Media.Brush;
 using MessageBox = System.Windows.MessageBox;
 using Window = System.Windows.Window;
-using HandyControl.Themes;
-using HandyControl.Tools.Extension;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
-using System.Resources;
-using System.Net.NetworkInformation;
-using System.Security.Policy;
-using System.Web;
-using System.Text.RegularExpressions;
 
 namespace MSL
 {
@@ -49,6 +41,7 @@ namespace MSL
         public static float PhisicalMemory;
         public static bool getServerInfo = false;
         public static bool getPlayerInfo = false;
+        public static bool EnableUpdChk = false;
 
         public MainWindow()
         {
@@ -56,15 +49,15 @@ namespace MSL
             Home.GotoFrpcEvent += GotoOnlinePage;
             SettingsPage.C_NotifyIcon += CtrlNotifyIcon;
             ServerRunner.GotoFrpcEvent += GotoFrpcPage;
-            SettingsPage.ChangeTitleStyle += ChangeTitleStyle;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            this.Topmost = true;
             LoadingCircle loadingCircle = new LoadingCircle();
             BodyGrid.Children.Add(loadingCircle);
             BodyGrid.RegisterName("loadingBar", loadingCircle);
-
+            this.Topmost = false;
             Thread thread = new Thread(AsyncLoadEvent);
             thread.Start();
         }
@@ -82,22 +75,22 @@ namespace MSL
                 //serverLink = Encoding.UTF8.GetString(pageData);
                 string serverAddr = Encoding.UTF8.GetString(pageData);
                 Ping pingSender = new Ping();
-                PingReply reply = pingSender.Send(serverAddr, 2000); // 替换成您要 ping 的 IP 地址
+                PingReply reply = pingSender.Send(serverAddr, 2000); // 替换成要 ping 的 IP 地址
                 if (reply.Status == IPStatus.Success)
                 {
-                    serverLink = "http://"+serverAddr;
+                    serverLink = "http://" + serverAddr;
                     //serverLink = "https://msl.waheal.top";
                 }
                 else
                 {
                     serverLink = "https://msl.waheal.top";
-                    Growl.Info("MSL主服务器连接超时，已切换至备用服务器！");
+                    Growl.Warning("MSL主服务器连接超时，已切换至备用服务器！");
                 }
             }
             catch
             {
                 serverLink = "https://msl.waheal.top";
-                Growl.Info("出现错误，已切换至备用服务器！");
+                Growl.Error("出现错误，已切换至备用服务器！");
             }
 
             //MessageBox.Show("GetLinkSuccess");
@@ -117,7 +110,6 @@ namespace MSL
                         DialogShow.ShowMsg(this, "请阅读并同意MSL开服器使用协议：https://www.waheal.top/eula.html", "提示", true, "不同意", "同意");
                         if (!MessageDialog._dialogReturn)
                         {
-
                             Close();
                         }
                         MessageDialog._dialogReturn = false;
@@ -127,12 +119,30 @@ namespace MSL
             }
             catch(Exception ex)
             {
-                DialogShow.ShowMsg(this, "MSL在初始化加载过程中出现问题，请尝试用管理员身份运行MSL……\n错误代码：" + ex.Message, "错误");
+                DialogShow.ShowMsg(this, "MSL在初始化加载过程中出现问题，请尝试用管理员身份运行MSL\n错误代码：" + ex.Message, "错误");
             }
 
             //MessageBox.Show("CheckDirSuccess");
 
             JObject jsonObject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8));
+
+            try
+            {
+                if (jsonObject["EnableUpdChk"] == null)
+                {
+                    string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
+                    JObject jobject = JObject.Parse(jsonString);
+                    jobject.Add("EnableUpdChk", "False");
+                    string convertString = Convert.ToString(jobject);
+                    File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
+                }
+                else
+                {
+                    EnableUpdChk = Convert.ToBoolean(jsonObject["EnableUpdChk"].ToString());
+                }
+            }
+            catch
+            { }
 
             //检测是否配置了内网映射(新版已弃用，现改为删除frpc的key)
             try
@@ -147,7 +157,7 @@ namespace MSL
                 }
             }
             catch
-            {}
+            { }
 
             //MessageBox.Show("CheckFrpcSuccess");
 
@@ -171,7 +181,7 @@ namespace MSL
                 }
             }
             catch
-            {}
+            { }
 
             //MessageBox.Show("CheckNotifySuccess");
 
@@ -403,100 +413,103 @@ namespace MSL
             //MessageBox.Show("AutoGetSuccess");
 
             //更新
-            try
+            if (EnableUpdChk == true)
             {
-                /*
-                WebClient MyWebClient = new WebClient();
-                MyWebClient.Credentials = CredentialCache.DefaultCredentials;
-                byte[] pageData = MyWebClient.DownloadData(serverLink + @"/msl/update.txt");
-                string pageHtml = Encoding.UTF8.GetString(pageData);
-                */
-
-                string pageHtml = Functions.Get("update");
-                string strtempa = "#";
-                int IndexofA = pageHtml.IndexOf(strtempa);
-                string Ru = pageHtml.Substring(IndexofA + 1);
-                string aaa = Ru.Substring(0, Ru.IndexOf("#"));
-                if (aaa.Contains("v"))
-                {
-                    aaa = aaa.Replace("v", "");
-                }
-                Version newVersion = new Version(aaa);
-                Version version = new Version(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-                
-                if (newVersion > version)
+                try
                 {
                     /*
-                    byte[] _updatelog = MyWebClient.DownloadData(serverLink + @"/msl/updatelog.txt");
-                    string updatelog = Encoding.UTF8.GetString(_updatelog);
+                    WebClient MyWebClient = new WebClient();
+                    MyWebClient.Credentials = CredentialCache.DefaultCredentials;
+                    byte[] pageData = MyWebClient.DownloadData(serverLink + @"/msl/update.txt");
+                    string pageHtml = Encoding.UTF8.GetString(pageData);
                     */
-                    string updatelog = Functions.Post("update",1);
-                    Dispatcher.Invoke(new Action(delegate
+
+                    string pageHtml = Functions.Get("update");
+                    string strtempa = "#";
+                    int IndexofA = pageHtml.IndexOf(strtempa);
+                    string Ru = pageHtml.Substring(IndexofA + 1);
+                    string aaa = Ru.Substring(0, Ru.IndexOf("#"));
+                    if (aaa.Contains("v"))
                     {
-                        bool dialog = DialogShow.ShowMsg(this, "发现新版本，版本号为：" + aaa + "，是否进行更新？\n更新日志：\n" + updatelog, "更新", true, "取消");
-                        if (dialog == true)
+                        aaa = aaa.Replace("v", "");
+                    }
+                    Version newVersion = new Version(aaa);
+                    Version version = new Version(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+
+                    if (newVersion > version)
+                    {
+                        /*
+                        byte[] _updatelog = MyWebClient.DownloadData(serverLink + @"/msl/updatelog.txt");
+                        string updatelog = Encoding.UTF8.GetString(_updatelog);
+                        */
+                        string updatelog = Functions.Post("update", 1);
+                        Dispatcher.Invoke(new Action(delegate
                         {
-                            string strtempa1 = "* ";
-                            int IndexofA1 = pageHtml.IndexOf(strtempa1);
-                            string Ru1 = pageHtml.Substring(IndexofA1 + 2);
-                            string aaa1 = Ru1.Substring(0, Ru1.IndexOf(" *"));
-                            DialogShow.ShowDownload(this, aaa1, AppDomain.CurrentDomain.BaseDirectory, "MSL" + aaa + ".exe", "下载新版本中……");
-                            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "MSL" + aaa + ".exe"))
+                            bool dialog = DialogShow.ShowMsg(this, "发现新版本，版本号为：" + aaa + "，是否进行更新？\n更新日志：\n" + updatelog, "更新", true, "取消");
+                            if (dialog == true)
                             {
-                                /*
-                                string vBatFile = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory) + @"\DEL.bat";
-                                using (StreamWriter vStreamWriter = new StreamWriter(vBatFile, false, Encoding.Default))
+                                string strtempa1 = "* ";
+                                int IndexofA1 = pageHtml.IndexOf(strtempa1);
+                                string Ru1 = pageHtml.Substring(IndexofA1 + 2);
+                                string aaa1 = Ru1.Substring(0, Ru1.IndexOf(" *"));
+                                DialogShow.ShowDownload(this, aaa1, AppDomain.CurrentDomain.BaseDirectory, "MSL" + aaa + ".exe", "下载新版本中……");
+                                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "MSL" + aaa + ".exe"))
                                 {
-                                    vStreamWriter.Write(string.Format(":del\r\n del \"" + System.Windows.Forms.Application.ExecutablePath + "\"\r\n " + "if exist \"" + System.Windows.Forms.Application.ExecutablePath + "\" goto del\r\n " + "start /d \"" + AppDomain.CurrentDomain.BaseDirectory + "\" MSL" + aaa + ".exe" + "\r\n" + " del %0\r\n", AppDomain.CurrentDomain.BaseDirectory));
+                                    /*
+                                    string vBatFile = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory) + @"\DEL.bat";
+                                    using (StreamWriter vStreamWriter = new StreamWriter(vBatFile, false, Encoding.Default))
+                                    {
+                                        vStreamWriter.Write(string.Format(":del\r\n del \"" + System.Windows.Forms.Application.ExecutablePath + "\"\r\n " + "if exist \"" + System.Windows.Forms.Application.ExecutablePath + "\" goto del\r\n " + "start /d \"" + AppDomain.CurrentDomain.BaseDirectory + "\" MSL" + aaa + ".exe" + "\r\n" + " del %0\r\n", AppDomain.CurrentDomain.BaseDirectory));
+                                    }
+                                    WinExec(vBatFile, 0);
+                                    Process.GetCurrentProcess().Kill();
+                                    */
+                                    string oldExePath = Process.GetCurrentProcess().MainModule.ModuleName;
+                                    string dwnExePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MSL" + aaa + ".exe");
+                                    string newExeDir = AppDomain.CurrentDomain.BaseDirectory;
+
+                                    // 输出CMD命令以便调试
+                                    string cmdCommand = "/C choice /C Y /N /D Y /T 1 & Del \"" + oldExePath + "\" & Ren \"" + "MSL" + aaa + ".exe" + "\" \"MSL.exe\" & start \"\" \"MSL.exe\"";
+                                    //MessageBox.Show(cmdCommand);
+
+                                    // 关闭当前运行中的应用程序
+                                    Application.Current.Shutdown();
+
+                                    // 删除旧版本并启动新版本
+                                    Process delProcess = new Process();
+                                    delProcess.StartInfo.FileName = "cmd.exe";
+                                    delProcess.StartInfo.Arguments = cmdCommand;
+                                    Directory.SetCurrentDirectory(newExeDir);
+                                    delProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                    delProcess.Start();
+
+                                    // 退出当前进程
+                                    Process.GetCurrentProcess().Kill();
                                 }
-                                WinExec(vBatFile, 0);
-                                Process.GetCurrentProcess().Kill();
-                                */
-                                string oldExePath = Process.GetCurrentProcess().MainModule.ModuleName;
-                                string dwnExePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MSL" + aaa + ".exe");
-                                string newExeDir = AppDomain.CurrentDomain.BaseDirectory;
-
-                                // 输出CMD命令以便调试
-                                string cmdCommand = "/C choice /C Y /N /D Y /T 1 & Del \"" + oldExePath + "\" & Ren \"" + "MSL" + aaa + ".exe" + "\" \"MSL.exe\" & start \"\" \"MSL.exe\"";
-                                //MessageBox.Show(cmdCommand);
-
-                                // 关闭当前运行中的应用程序
-                                Application.Current.Shutdown();
-
-                                // 删除旧版本并启动新版本
-                                Process delProcess = new Process();
-                                delProcess.StartInfo.FileName = "cmd.exe";
-                                delProcess.StartInfo.Arguments = cmdCommand;
-                                Directory.SetCurrentDirectory(newExeDir);
-                                delProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                delProcess.Start();
-
-                                // 退出当前进程
-                                Process.GetCurrentProcess().Kill();
+                                else
+                                {
+                                    MessageBox.Show("更新失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                                }
                             }
                             else
                             {
-                                MessageBox.Show("更新失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                                Growl.Error("您拒绝了更新新版本，若在此版本中遇到bug，请勿报告给作者！");
                             }
-                        }
-                        else
-                        {
-                            Growl.Error("您拒绝了更新新版本，若在此版本中遇到bug，请勿报告给作者！");
-                        }
-                    }));
+                        }));
+                    }
+                    else if (newVersion < version)
+                    {
+                        Growl.Info("当前版本高于正式版本，若使用中遇到BUG，请及时反馈！");
+                    }
+                    else
+                    {
+                        Growl.Success("您使用的开服器已是最新版本！");
+                    }
                 }
-                else if(newVersion<version)
+                catch (Exception ex)
                 {
-                    Growl.Info("当前版本高于正式版本，若使用中遇到BUG，请及时反馈！");
+                    Growl.Error("检查更新失败！" + ex.Message);
                 }
-                else
-                {
-                    Growl.Success("您使用的开服器已是最新版本！");
-                }
-            }
-            catch(Exception ex)
-            {
-                Growl.Error("检查更新失败！"+ex.Message);
             }
 
             //MessageBox.Show("CheckUpdateSuccess");
@@ -789,6 +802,16 @@ namespace MSL
                 else
                 {
                     ChangeTitleStyle(false);
+                }
+                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "MSL\\Background.png"))//check background and set it
+                {
+                    SideMenuBorder.BorderThickness = new Thickness(0);
+                    Background = new ImageBrush(SettingsPage.GetImage(AppDomain.CurrentDomain.BaseDirectory + "MSL\\Background.png"));
+                }
+                else
+                {
+                    SetResourceReference(BackgroundProperty, "BackgroundBrush");
+                    SideMenuBorder.BorderThickness = new Thickness(0, 0, 1, 0);
                 }
                 //RunFormChangeTitle();
             }

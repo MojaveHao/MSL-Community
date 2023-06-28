@@ -23,14 +23,13 @@ using System.Windows.Threading;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using Path = System.IO.Path;
-using Window = System.Windows.Window;
 
 namespace MSL.forms
 {
     /// <summary>
     /// CreateServer.xaml 的交互逻辑
     /// </summary>
-    public partial class CreateServer : Window
+    public partial class CreateServer : HandyControl.Controls.Window
     {
         string DownjavaName;
 
@@ -172,7 +171,6 @@ namespace MSL.forms
                                 }
                                 else
                                 {
-                                    DialogShow.ShowMsg(this, "安装失败，请查看是否有杀毒软件进行拦截！请确保添加信任或关闭杀毒软件后进行重新安装！", "错误");
                                     return;
                                 }
                             }
@@ -219,20 +217,41 @@ namespace MSL.forms
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(serverbase);
                 FileInfo[] fileInfo = directoryInfo.GetFiles("*.jar");
+                List<string> files = new List<string>();
                 foreach (var file in fileInfo)
                 {
-                    DialogShow.ShowMsg(this, "开服器在整合包中检测到了jar文件" + file.Name + "，是否选择此文件为开服核心？", "提示", true, "取消");
-                    if (MessageDialog._dialogReturn == true)
+                    files.Add(file.Name);
+                }
+                if(files.Count > 1)
+                {
+                    string filestr="";
+                    int i = 0;
+                    foreach (var file in files)
                     {
-                        MessageDialog._dialogReturn = false;
-                        servercore = "server.jar";
+                        filestr += "\n"+i.ToString()+"."+ file;
+                        i++;
+                    }
+                    bool ret= DialogShow.ShowInput(this, "开服器在整合包中检测到了以下jar文件，你可输选择一个作为开服核心（输入文件前对应的数字，取消为不选择以下文件）\n" + filestr,out string selectFile);
+                    if (ret)
+                    {
+                        servercore = files[int.Parse(selectFile)];
                         sJVM.IsSelected = true;
                         sJVM.IsEnabled = true;
                         sserver.IsEnabled = false;
-                        break;
                     }
                 }
-                if (fileInfo.Length == 0)
+                else if(files.Count==1)
+                {
+                    bool ret= DialogShow.ShowMsg(this, "开服器在整合包中检测到了jar文件" + files[0] + "，是否选择此文件为开服核心？", "提示", true, "取消");
+                    if (ret)
+                    {
+                        servercore = files[0];
+                        sJVM.IsSelected = true;
+                        sJVM.IsEnabled = true;
+                        sserver.IsEnabled = false;
+                    }
+                }
+                else if (files.Count == 0)
                 {
                     Growl.Info("开服器未在整合包中找到核心文件，请您进行下载或手动选择已有核心，核心的版本要和整合包对应的游戏版本一致");
                 }
@@ -294,10 +313,11 @@ namespace MSL.forms
                 serverjava = AppDomain.CurrentDomain.BaseDirectory + @"MSL\" + DownjavaName + @"\bin\java.exe";
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                //MessageBox.Show(ex.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                DialogShow.ShowMsg(this, "解压失败，Java压缩包可能已损坏，请重试！错误代码：" + ex.Message + "\n（注：若多次重试均无法解压的话，请自行去网络上下载安装并使用自定义模式来创建服务器）", "错误");
                 return false;
-                //MessageBox.Show("安装失败，请查看是否有杀毒软件进行拦截！请确保添加信任或关闭杀毒软件后进行重新安装！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private void return2_Click(object sender, RoutedEventArgs e)
@@ -413,6 +433,15 @@ namespace MSL.forms
 
         private void return5_Click(object sender, RoutedEventArgs e)
         {
+            if (isImportPack)
+            {
+                MainGrid.Visibility = Visibility.Visible;
+                tabCtrl.Visibility = Visibility.Hidden;
+                welcome.IsSelected = true;
+                welcome.IsEnabled = true;
+                sserver.IsEnabled = false;
+                return;
+            }
             welcome.IsSelected = true;
             welcome.IsEnabled = true;
             sserver.IsEnabled = false;
@@ -595,7 +624,7 @@ namespace MSL.forms
         }
 
         bool isImportPack = false;
-        private void importPack_Click(object sender, RoutedEventArgs e)
+        private async void importPack_Click(object sender, RoutedEventArgs e)
         {
             bool _dialog = DialogShow.ShowMsg(this, "请选择你要导入本地整合包还是在线整合包！", "提示", true, "导入本地整合包", "导入在线整合包");
             if (_dialog)
@@ -627,9 +656,11 @@ namespace MSL.forms
                             break;
                         }
                     }
+                    Dialog waitDialog = new Dialog();
                     try
                     {
-                        new FastZip().ExtractZip(AppDomain.CurrentDomain.BaseDirectory + "MSL\\ServerPack.zip", serverPath, "");
+                        waitDialog = Dialog.Show(new TextDialog("解压整合包中，请稍等……"));
+                        await Task.Run(() => new FastZip().ExtractZip(AppDomain.CurrentDomain.BaseDirectory + "MSL\\ServerPack.zip", serverPath, ""));
                         DirectoryInfo[] dirs = new DirectoryInfo(serverPath).GetDirectories();
                         if (dirs.Length == 1)
                         {
@@ -639,9 +670,11 @@ namespace MSL.forms
                     }
                     catch (Exception ex)
                     {
+                        waitDialog.Close();
                         DialogShow.ShowMsg(this, "整合包解压失败！请确认您的整合包是.zip格式！\n错误代码：" + ex.Message, "错误");
                         return;
                     }
+                    waitDialog.Close();
                     MainGrid.Visibility = Visibility.Hidden;
                     tabCtrl.Visibility = Visibility.Visible;
                     isImportPack = true;
@@ -650,7 +683,6 @@ namespace MSL.forms
                     sserver.IsSelected = true;
                     sserver.IsEnabled = true;
                     welcome.IsEnabled = false;
-                    return5.IsEnabled = false;
                 }
             }
             else
@@ -684,11 +716,11 @@ namespace MSL.forms
                         var res = openfile.ShowDialog();
                         if (res == true)
                         {
+                            Dialog waitDialog = new Dialog();
                             try
                             {
-
-
-                                new FastZip().ExtractZip(openfile.FileName, serverPath, "");
+                                waitDialog = Dialog.Show(new TextDialog("解压整合包中，请稍等……"));
+                                await Task.Run(() => new FastZip().ExtractZip(openfile.FileName, serverPath, ""));
                                 DirectoryInfo[] dirs = new DirectoryInfo(serverPath).GetDirectories();
                                 if (dirs.Length == 1)
                                 {
@@ -697,9 +729,11 @@ namespace MSL.forms
                             }
                             catch (Exception ex)
                             {
+                                waitDialog.Close();
                                 DialogShow.ShowMsg(this, "整合包解压失败！请确认您的整合包是.zip格式！\n错误代码：" + ex.Message, "错误");
                                 return;
                             }
+                            waitDialog.Close();
                             MainGrid.Visibility = Visibility.Hidden;
                             tabCtrl.Visibility = Visibility.Visible;
                             isImportPack = true;
@@ -708,7 +742,6 @@ namespace MSL.forms
                             sserver.IsSelected = true;
                             sserver.IsEnabled = true;
                             welcome.IsEnabled = false;
-                            return5.IsEnabled = false;
                         }
                     }
                 }
@@ -861,7 +894,6 @@ namespace MSL.forms
                     if (reply.Status != IPStatus.Success)
                     {
                         MainWindow.serverLink = "https://msl.waheal.top";
-                        Growl.Info("MSL主服务器连接超时，已切换至备用服务器！");
                     }
                 }
                 string jsonData = Functions.Get("serverlist");
@@ -926,7 +958,7 @@ namespace MSL.forms
                                         JObject patientinfo = new JObject();
                                         patientinfo["server_name"] = i;
                                         string sendData = JsonConvert.SerializeObject(patientinfo);
-                                        string resultData = Functions.Post("serverlist",0,sendData);
+                                        string resultData = Functions.Post("serverlist", 0, sendData);
                                         //MessageBox.Show(resultData);
                                         tempServerCore.Add(coreType, resultData);
                                         Dictionary<string, string> serverDetails = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultData);
@@ -946,7 +978,7 @@ namespace MSL.forms
                                             JObject patientinfo = new JObject();
                                             patientinfo["server_name"] = i;
                                             string sendData = JsonConvert.SerializeObject(patientinfo);
-                                            string resultData = Functions.Post("serverlist", 0, sendData,"https://api.waheal.top");
+                                            string resultData = Functions.Post("serverlist", 0, sendData, "https://api.waheal.top");
                                             //MessageBox.Show(resultData);
                                             tempServerCore.Add(coreType, resultData);
                                             Dictionary<string, string> serverDetails = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultData);
@@ -1025,7 +1057,7 @@ namespace MSL.forms
         }
 
         List<string> downloadCoreUrl = new List<string>();
-        Dictionary<string,string> tempServerCore = new Dictionary<string,string>();
+        Dictionary<string, string> tempServerCore = new Dictionary<string, string>();
         private void FastModeNextBtn_Click(object sender, RoutedEventArgs e)
         {
             servername = ServerNameBox.Text;
@@ -1070,7 +1102,7 @@ namespace MSL.forms
             {
                 if (versionString.Contains("-"))
                 {
-                    versionString=versionString.Substring(0,versionString.IndexOf("-"));
+                    versionString = versionString.Substring(0, versionString.IndexOf("-"));
                 }
                 string[] components = versionString.Split('.');
                 if (components.Length >= 3 && int.TryParse(components[2], out int _))
@@ -1196,7 +1228,6 @@ namespace MSL.forms
                     }
                     else
                     {
-                        DialogShow.ShowMsg(this, "安装失败，请查看是否有杀毒软件进行拦截！请确保添加信任或关闭杀毒软件后进行重新安装！", "错误");
                         FastModeInstallBtn.IsEnabled = true;
                         return;
                     }

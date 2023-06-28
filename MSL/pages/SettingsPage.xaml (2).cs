@@ -26,7 +26,6 @@ namespace MSL.pages
     {
         public static event DeleControl C_NotifyIcon;
         public static event DeleControl ChangeSkinStyle;
-        public bool EnableUpdChk = false;
         List<string> _runServerList = new List<string>();
         public SettingsPage()
         {
@@ -623,7 +622,6 @@ namespace MSL.pages
 
         private void checkUpdateBtn_Click(object sender, RoutedEventArgs e)
         {
-            EnableUpdChk = true;
             //更新
             try
             {
@@ -720,24 +718,6 @@ namespace MSL.pages
             {
                 Growl.Error("检查更新失败！");
             }
-        }
-        private void SendInfo(object sender, RoutedEventArgs e)
-        {
-            /*
-            [DllImport("MSL2-BCLinker.dll", EntryPoint = "send_msg_to_bc")]
-            private static extern int SendMsgToBC(string cmd,string port);
-            */
-            Growl.Info("发送的信息:" + SendMsg.Text);
-        }
-
-        private void DisableUpdBtn_Click(object sender, RoutedEventArgs e)
-        {
-            EnableUpdChk = false;
-            JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
-            jobject["EnableUpdChk"] = "False";
-            string convertString = Convert.ToString(jobject);
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", convertString, Encoding.UTF8);
-            Growl.Warning("更新检查已禁用");
         }
         /*
 [DllImport("MSL-BCLinker.dll", EntryPoint = "send_msg_to_bc")]

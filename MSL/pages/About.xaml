@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:hc="https://handyorg.github.io/handycontrol"
-      xmlns:local="clr-namespace:MSL.pages"
       mc:Ignorable="d" 
       d:DesignHeight="460" d:DesignWidth="750"
       Title="About">
@@ -20,20 +19,20 @@
         <StackPanel>
             <Border Style="{StaticResource MagicBorder}">
                 <Grid>
-                    <Label x:Name="AppVersionLab" Content="关于开服器" Style="{StaticResource BorderTitle}"/>
+                    <Label x:Name="AppVersionLab" Content="关于MSL" Style="{StaticResource BorderTitle}"/>
                     <Image Source="/MSL;component/icon.ico" Margin="0,25,550,0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="80" Height="80"/>
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="100,35,0,0">
-                        <TextBlock FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource TextBlockBrush}"><Run Text="Minecraft Server Launcher(MSL) Copy"/><Run Text="lef"/><Run Text="t 🄯 2021-2023 By Waheal&#xA;开服器的成功制作离不开以下人员的帮助及支持：&#xA;MojaveHao、FlyingChubbyFish —— 提供部分技术支持和改进意见&#xA;同时在此鸣谢所有使用MSL的用户，以及给MSL提出过改进建议和Bug的用户&#xA;感谢各位的支持与信任！"/></TextBlock>
+                        <TextBlock FontSize="14" HorizontalAlignment="Center" Foreground="{DynamicResource TextBlockBrush}" Width="514"><Run Text="主要维护人员名单："/><Run Text="                 "/><Run Text="&#xA;MojaveHao"/><LineBreak/><Run Text="Waheal"/><LineBreak/><Run Text="MemoryShadow"/></TextBlock>
                         <hc:Shield Subject="官方文档：https://docs.waheal.top/" Status="打开网站" Command="hc:ControlCommands.OpenLink" CommandParameter="https://docs.waheal.top/" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,5,0,0"/>
                     </StackPanel>
-                    
+
                 </Grid>
             </Border>
             <Border x:Name="openSource" Style="{StaticResource MagicBorder}">
                 <StackPanel>
                     <Label Content="开源（Github）" Style="{StaticResource BorderTitle}"/>
-                    <TextBlock Margin="20,10,20,0" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="{DynamicResource TextBlockBrush}" Text="Waheal/Minecraft-Server-Launcher is licensed under the GNU General Public License v3.0&#xA;Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights."/>
-                    <hc:Shield Subject="地址：https://github.com/Waheal/Minecraft-Server-Launcher" Status="打开网站" Margin="20,5,20,0" Command="hc:ControlCommands.OpenLink" CommandParameter="https://github.com/Waheal/Minecraft-Server-Launcher" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBlock Margin="20,5,20,0" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="{DynamicResource TextBlockBrush}" Text="MSL-Community 根据 GNU GPLv3 获得许可，这个强大的Copyleft许可证以提供许可作品和修改的完整源代码为条件，其中包括在同一许可证下使用许可作品的较大作品。 必须保留版权和许可声明。 贡献者明确授予专利权。"/>
+                    <hc:Shield Subject="地址：https://github.com/MojaveHao/MSL-Community" Status="打开网站" Margin="20,5,20,0" Command="hc:ControlCommands.OpenLink" CommandParameter="https://github.com/MojaveHao/MSL-Community" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource MagicBorder}">
@@ -88,11 +87,23 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
+            <!--
             <Border x:Name="support" Margin="10,10,10,20" Style="{StaticResource MagicBorder}">
                 <StackPanel>
                     <Label Content="赞助" Style="{StaticResource BorderTitle}"/>
                     <TextBlock Text="软件制作不易，十分期待您的赞助！" Foreground="{DynamicResource TextBlockBrush}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <hc:Shield Subject="地址：https://afdian.net/@makabaka123" Status="打开网站" Margin="0,5,0,0" Command="hc:ControlCommands.OpenLink" CommandParameter="https://afdian.net/@makabaka123" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+            -->
+            <Border x:Name="AdvancedInfo" Margin="10,10,10,20" Style="{StaticResource MagicBorder}">
+                <StackPanel>
+                    <Label Content="系统信息" Style="{StaticResource BorderTitle}"/>
+                    <TextBlock Name ="Hash" FontSize="14" HorizontalAlignment="Center" Foreground="{DynamicResource TextBlockBrush}" Width="692" Text="软件哈希值:"/>
+                    <TextBlock Name ="OSVersion" FontSize="14" HorizontalAlignment="Center" Foreground="{DynamicResource TextBlockBrush}" Width="692" Text="系统版本:"/>
+                    <TextBlock Name ="CurrentPath" FontSize="14" HorizontalAlignment="Center" Foreground="{DynamicResource TextBlockBrush}" Width="692" Text="当前目录:"/>
+                    <TextBlock Name ="dotNetVersion" FontSize="14" HorizontalAlignment="Center" Foreground="{DynamicResource TextBlockBrush}" Width="692" Text=".NET Framework版本:"/>
+                    <TextBlock Name ="RunAsAdmin" FontSize="14" HorizontalAlignment="Center" Foreground="{DynamicResource TextBlockBrush}" Width="692" Text="以管理员权限运行:"/>
                 </StackPanel>
             </Border>
         </StackPanel>

@@ -3,8 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:hc="https://handyorg.github.io/handycontrol"
-      xmlns:local="clr-namespace:MSL.pages"
       mc:Ignorable="d" 
       d:DesignHeight="460" d:DesignWidth="750"
       Title="FrpcPage" Loaded="Page_Loaded">
@@ -19,7 +17,7 @@
     <Border Style="{StaticResource MagicBorder}" VerticalAlignment="Stretch" Margin="10,10,10,10">
         <Grid>
             <Label Content="内网映射" Style="{StaticResource BorderTitle}"/>
-            <TextBlock x:Name="frplab1" Text="未检测到内网映射配置，请点击 配置 按钮以配置" Margin="20,45,0,0" VerticalAlignment="Top" FontSize="16" Foreground="Red" HorizontalAlignment="Left"/>
+            <TextBlock x:Name="frplab1" Text="未检测到内网映射配置，请点击 配置 按钮以配置" Margin="10,40,0,0" VerticalAlignment="Top" FontSize="16" Foreground="Red" HorizontalAlignment="Left"/>
             <TextBlock Text="您的公网IP为：" HorizontalAlignment="Left" Margin="20,80,0,0" VerticalAlignment="Top" FontSize="16" Foreground="{DynamicResource TextBlockBrush}"/>
             <TextBlock x:Name="frplab3" Text="无" HorizontalAlignment="Left" Margin="150,80,0,0" VerticalAlignment="Top" FontSize="16" Foreground="{DynamicResource TextBlockBrush}"/>
             <Button x:Name="copyFrpc" Content="复制" HorizontalAlignment="Right" FontSize="14"  Margin="0,75,20,0" VerticalAlignment="Top" Width="100" Height="35" FontWeight="Normal" IsEnabled="False" Click="copyFrpc_Click"/>

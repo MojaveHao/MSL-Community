@@ -1,15 +1,11 @@
 ﻿using MSL.controls;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MessageBox = System.Windows.MessageBox;
@@ -92,7 +88,7 @@ namespace MSL.pages
                     }
                     else
                     {
-                        noticeLabText = "获取公告失败！请检查网络连接是否正常或联系作者进行解决！";
+                        noticeLabText = "获取公告失败";
                     }
                     JObject keyValues1 = (JObject)keyValues["recommends"];
                     if (keyValues["recommends"] != null)
@@ -203,7 +199,7 @@ namespace MSL.pages
                         }
                         else
                         {
-                            noticeLabText = "获取公告失败！请检查网络连接是否正常或联系作者进行解决！";
+                            noticeLabText = "获取公告失败";
                         }
                         JObject keyValues1 = (JObject)keyValues["recommends"];
                         if (keyValues["recommends"] != null)
@@ -283,7 +279,7 @@ namespace MSL.pages
             }
             catch
             {
-                noticeLabText = "获取公告失败！请检查网络连接是否正常或联系作者进行解决！";
+                noticeLabText = "获取公告失败";
             }
 
             Dispatcher.Invoke(new Action(delegate

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -31,6 +30,7 @@ namespace MSL.pages
         public static bool ControlSetPMTab = false;
         public static List<string> serverid = new List<string>();
         public static string RunningServerIDs = "";
+        public static bool ShowWarn = true;
 
         class ServerInfo
         {
@@ -134,7 +134,11 @@ namespace MSL.pages
             catch
             {
                 var mainwindow = (MainWindow)Window.GetWindow(this);
-                DialogShow.ShowMsg(mainwindow, "开服器检测到配置文件出现了错误，是第一次使用吗？\n是否创建一个新的服务器？", "警告", true, "取消");
+                if (ShowWarn == true)
+                {
+                    DialogShow.ShowMsg(mainwindow, "开服器检测到配置文件出现了错误，是第一次使用吗？\n是否创建一个新的服务器？", "警告", true, "取消");
+                    ShowWarn = false;
+                }
                 if (MessageDialog._dialogReturn == true)
                 {
                     Window wn = new forms.CreateServer();

@@ -4,9 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:hc="https://handyorg.github.io/handycontrol"
-      xmlns:local="clr-namespace:MSL.pages"
       mc:Ignorable="d" 
-      d:DesignHeight="460" d:DesignWidth="750"
+      d:DesignHeight="460" d:DesignWidth="870"
       Title="Home" Loaded="Page_Loaded">
     <Page.RenderTransform>
         <TranslateTransform/>
@@ -21,7 +20,7 @@
             <Grid>
                 <Image x:Name="noticeImage" Margin="0,35,0,0"/>
                 <TextBox x:Name="noticeLab" TextBlock.LineHeight="24" ContextMenu="{DynamicResource UIContextMenu}" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" VerticalContentAlignment="Top" BorderThickness="0" Background="{x:Null}" Margin="5,35,5,5" FontSize="14"/>
-                <Label Content="公告：" Style="{StaticResource BorderTitle}"/>
+                <Label Content="公告" Style="{StaticResource BorderTitle}"/>
             </Grid>
         </Border>
         <Border x:Name="recommendBorder" Margin="10,100,10,80" Padding="10" Style="{StaticResource MagicBorder}" Visibility="Hidden">

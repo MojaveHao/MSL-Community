@@ -4,15 +4,10 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
-using System.Security.Policy;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -21,7 +16,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using File = System.IO.File;
-using MessageBox = System.Windows.MessageBox;
 
 namespace MSL.pages
 {

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -59,7 +58,7 @@ namespace MSL
                 lb01.Visibility = Visibility.Visible;
                 WebClient webClient = new WebClient();
                 webClient.Credentials = CredentialCache.DefaultCredentials;
-                byte[] pageData = webClient.DownloadData(MainWindow.serverLink + @"/msl/CC/cruseforgetoken");
+                byte[] pageData = await webClient.DownloadDataTaskAsync(MainWindow.serverLink + @"/msl/CC/cruseforgetoken");
                 string token = Encoding.UTF8.GetString(pageData);
                 int index = token.IndexOf("\r\n");
                 string _token = token.Substring(0, index);
