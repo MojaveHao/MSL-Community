@@ -6,8 +6,8 @@ MSL开服器的社区版本，重新出发，美观实用！
 
 TODOLIST:
 
-- 服务端和软件分离
-- 插件系统
+- [ ] [服务端和软件分离](https://github.com/MojaveHao/MSL-Community/issues/2#issue-1771633806)
+- [ ] 插件系统
 
 **[原版MSL传送门](https://github.com/Waheal/Minecraft-Server-Launcher)**
 **以下内容皆为原仓库README内容**
