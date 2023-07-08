@@ -30,6 +30,7 @@ namespace MSL.pages
         public static bool ControlSetPMTab = false;
         public static List<string> serverid = new List<string>();
         public static string RunningServerIDs = "";
+        public static bool ShowWarn = true;
 
         class ServerInfo
         {
@@ -133,7 +134,11 @@ namespace MSL.pages
             catch
             {
                 var mainwindow = (MainWindow)Window.GetWindow(this);
-                DialogShow.ShowMsg(mainwindow, "开服器检测到配置文件出现了错误，是第一次使用吗？\n是否创建一个新的服务器？", "警告", true, "取消");
+                if (ShowWarn == true)
+                {
+                    DialogShow.ShowMsg(mainwindow, "开服器检测到配置文件出现了错误，是第一次使用吗？\n是否创建一个新的服务器？", "警告", true, "取消");
+                    ShowWarn = false;
+                }
                 if (MessageDialog._dialogReturn == true)
                 {
                     Window wn = new forms.CreateServer();
@@ -143,12 +148,12 @@ namespace MSL.pages
                 }
             }
         }
-
+        
         private void serverList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             StartServerEvent();
         }
-
+        
 
         private void startServer_Click(object sender, RoutedEventArgs e)
         {
@@ -235,7 +240,7 @@ namespace MSL.pages
             }
             try
             {
-
+                
                 //serverList.Items.Remove(serverList.SelectedItem);
                 DialogShow.ShowMsg(mainwindow, "是否删除该服务器的目录？（服务器目录中的所有文件都会被移至回收站）", "提示", true, "取消");
                 if (MessageDialog._dialogReturn)

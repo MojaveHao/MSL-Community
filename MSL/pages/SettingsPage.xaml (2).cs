@@ -26,7 +26,6 @@ namespace MSL.pages
     {
         public static event DeleControl C_NotifyIcon;
         public static event DeleControl ChangeSkinStyle;
-        public bool EnableUpdChk = false;
         List<string> _runServerList = new List<string>();
         public SettingsPage()
         {
@@ -264,7 +263,7 @@ namespace MSL.pages
             if (BlueSkinBtn.IsChecked == true)
             {
                 BrushConverter brushConverter = new BrushConverter();
-                ThemeManager.Current.AccentColor = (Brush)brushConverter.ConvertFromString("#0078D4");
+                ThemeManager.Current.AccentColor = (System.Windows.Media.Brush)brushConverter.ConvertFromString("#0078D4");
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "1";
                 string convertString = Convert.ToString(jobject);
@@ -273,7 +272,7 @@ namespace MSL.pages
             }
             else if (RedSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = Brushes.Red;
+                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Red;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "2";
                 string convertString = Convert.ToString(jobject);
@@ -282,7 +281,7 @@ namespace MSL.pages
             }
             else if (GreenSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = Brushes.Green;
+                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Green;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "3";
                 string convertString = Convert.ToString(jobject);
@@ -291,7 +290,7 @@ namespace MSL.pages
             }
             else if (OrangeSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = Brushes.Orange;
+                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Orange;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "4";
                 string convertString = Convert.ToString(jobject);
@@ -300,7 +299,7 @@ namespace MSL.pages
             }
             else if (PurpleSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = Brushes.Purple;
+                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Purple;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "5";
                 string convertString = Convert.ToString(jobject);
@@ -309,7 +308,7 @@ namespace MSL.pages
             }
             else if (PinkSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = Brushes.DeepPink;
+                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.DeepPink;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "6";
                 string convertString = Convert.ToString(jobject);
@@ -370,7 +369,7 @@ namespace MSL.pages
         {
             if (autoSetTheme.IsChecked == true)
             {
-                //ThemeManager.Current.AccentColor = Brushes.DeepPink;
+                //ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.DeepPink;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["darkTheme"] = "Auto";
                 jobject["skin"] = "0";
@@ -392,7 +391,7 @@ namespace MSL.pages
             }
             else
             {
-                //ThemeManager.Current.AccentColor = Brushes.DeepPink;
+                //ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.DeepPink;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["darkTheme"] = "False";
                 jobject["skin"] = "1";
@@ -479,37 +478,37 @@ namespace MSL.pages
             {
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    mainwindow.Background = Brushes.LightBlue;
+                    mainwindow.Background = System.Windows.Media.Brushes.LightBlue;
                     BrushConverter brushConverter = new BrushConverter();
-                    ThemeManager.Current.AccentColor = (Brush)brushConverter.ConvertFromString("#0078D4");
+                    ThemeManager.Current.AccentColor = (System.Windows.Media.Brush)brushConverter.ConvertFromString("#0078D4");
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    ThemeManager.Current.AccentColor = Brushes.Red;
+                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Red;
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    mainwindow.Background = Brushes.LightGreen;
-                    ThemeManager.Current.AccentColor = Brushes.Green;
+                    mainwindow.Background = System.Windows.Media.Brushes.LightGreen;
+                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Green;
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    mainwindow.Background = Brushes.LightYellow;
-                    ThemeManager.Current.AccentColor = Brushes.Orange;
+                    mainwindow.Background = System.Windows.Media.Brushes.LightYellow;
+                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Orange;
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    ThemeManager.Current.AccentColor = Brushes.Purple;
+                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Purple;
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    mainwindow.Background = Brushes.LightPink;
-                    ThemeManager.Current.AccentColor = Brushes.DeepPink;
+                    mainwindow.Background = System.Windows.Media.Brushes.LightPink;
+                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.DeepPink;
                 }));
                 Thread.Sleep(200);
             }
@@ -623,7 +622,6 @@ namespace MSL.pages
 
         private void checkUpdateBtn_Click(object sender, RoutedEventArgs e)
         {
-            EnableUpdChk = true;
             //更新
             try
             {
@@ -720,24 +718,6 @@ namespace MSL.pages
             {
                 Growl.Error("检查更新失败！");
             }
-        }
-        private void SendInfo(object sender, RoutedEventArgs e)
-        {
-            /*
-            [DllImport("MSL2-BCLinker.dll", EntryPoint = "send_msg_to_bc")]
-            private static extern int SendMsgToBC(string cmd,string port);
-            */
-            Growl.Info("发送的信息:" + SendMsg.Text);
-        }
-
-        private void DisableUpdBtn_Click(object sender, RoutedEventArgs e)
-        {
-            EnableUpdChk = false;
-            JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
-            jobject["EnableUpdChk"] = "False";
-            string convertString = Convert.ToString(jobject);
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", convertString, Encoding.UTF8);
-            Growl.Warning("更新检查已禁用");
         }
         /*
 [DllImport("MSL-BCLinker.dll", EntryPoint = "send_msg_to_bc")]

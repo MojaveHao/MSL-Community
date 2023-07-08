@@ -26,6 +26,7 @@ namespace MSL.pages
         public delegate void DelReadStdOutput(string result);
         public static Process FRPCMD = new Process();
         public event DelReadStdOutput ReadStdOutput;
+        public static bool ShowWarn = true;
         string _dnfrpc;
         bool isMaster;
         public OnlinePage()
@@ -39,7 +40,7 @@ namespace MSL.pages
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "MSL\\P2Pfrpc"))
             {
                 string a = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\P2Pfrpc");
-                if (a.IndexOf("role = visitor") + 1 != 0)
+                if(a.IndexOf("role = visitor") + 1 != 0)
                 {
                     visiterExp.IsExpanded = true;
                 }
@@ -51,7 +52,11 @@ namespace MSL.pages
             else
             {
                 var mainwindow = (MainWindow)Window.GetWindow(this);
-                DialogShow.ShowMsg(mainwindow, "注意：此功能目前不稳定，无法穿透所有类型的NAT，若联机失败，请尝试开服务器并使用内网映射联机！\r\n该功能可能需要正版账户，若无法联机，请从网络上寻找解决方法或尝试开服务器并使用内网映射联机！", "警告");
+                if (ShowWarn == true)
+                {
+                    DialogShow.ShowMsg(mainwindow, "注意：此功能目前不稳定，无法穿透所有类型的NAT，若联机失败，请尝试开服务器并使用内网映射联机！\r\n该功能可能需要正版账户，若无法联机，请从网络上寻找解决方法或尝试开服务器并使用内网映射联机！", "警告");
+                    ShowWarn = false;
+                }
                 masterExp.IsExpanded = true;
             }
             Thread thread = new Thread(GetFrpcInfo);
@@ -337,7 +342,7 @@ namespace MSL.pages
                             FRPCMD.OutputDataReceived -= new DataReceivedEventHandler(p_OutputDataReceived);
                         }
                         catch
-                        { }
+                        {}
                     }
                     if (isMaster)
                     {
@@ -383,7 +388,7 @@ namespace MSL.pages
                             FRPCMD.OutputDataReceived -= new DataReceivedEventHandler(p_OutputDataReceived);
                         }
                         catch
-                        { }
+                        {}
                     }
                     if (isMaster)
                     {

@@ -20,7 +20,7 @@ namespace MSL
     /// <summary>
     /// DownloadMods.xaml 的交互逻辑
     /// </summary>
-    public partial class DownloadMods : HandyControl.Controls.Window
+    public partial class DownloadMods : Window
     {
         string Url;
         string Filename;
@@ -32,7 +32,7 @@ namespace MSL
         List<string> modUrls = new List<string>();
         List<string> imageUrls = new List<string>();
         List<string> backList = new List<string>();
-        public DownloadMods(int loadtype = 0)
+        public DownloadMods(int loadtype=0)
         {
             InitializeComponent();
             loadType = loadtype;
@@ -232,9 +232,9 @@ namespace MSL
                 backBtn.IsEnabled = false;
                 listBoxColumnName.Header = "模组列表（双击获取该模组的版本）：";
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show("获取MOD失败！您的系统版本可能过旧，请再次尝试或前往浏览器自行下载！" + ex.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("获取MOD失败！您的系统版本可能过旧，请再次尝试或前往浏览器自行下载！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private async void searchMod_Click(object sender, RoutedEventArgs e)
@@ -381,10 +381,10 @@ namespace MSL
                         var cfApiClient = new CurseForge.APIClient.ApiClient(_token);
                         var selectedModId = modIds[listBox.SelectedIndex];
                         var modFiles = await cfApiClient.GetModFilesAsync(selectedModId);
-
+                        
                         listBox.Items.Clear();
                         modVersions.Clear();
-
+                        
                         if (loadType == 0)
                         {
                             for (int i = 0; i < modFiles.Data.Count; i++)
@@ -413,9 +413,9 @@ namespace MSL
                                 }
                             }
                         }
-
+                        
                     }
-                    catch (Exception ex) { MessageBox.Show(ex.ToString()); }
+                    catch(Exception ex) { MessageBox.Show(ex.ToString()); }
                     lCircle.IsRunning = false;
                     lCircle.Visibility = Visibility.Hidden;
                     lb01.Visibility = Visibility.Hidden;

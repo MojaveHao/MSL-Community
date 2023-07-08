@@ -99,7 +99,7 @@ namespace MSL.pages
                     {
                         frpcOutlog.Text = frpcOutlog.Text + "用户名或密码不能为空！\n";
                     }
-                    else if (msg.IndexOf("i/o timeout") + 1 != 0)
+                    else if(msg.IndexOf("i/o timeout") + 1 != 0)
                     {
                         frpcOutlog.Text = frpcOutlog.Text + "连接超时，该节点可能下线，请重新配置！\n";
                     }

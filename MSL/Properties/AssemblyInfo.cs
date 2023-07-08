@@ -5,12 +5,12 @@ using System.Windows;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("Minecraft Server Launcher")]
+[assembly: AssemblyTitle("Minecraft Server Launcher Community")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Minecraft Server Launcher")]
-[assembly: AssemblyCopyright("Copyright © Waheal 2021-2023")]
+[assembly: AssemblyCopyright("Copyleft 🄯 Waheal 2021-2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

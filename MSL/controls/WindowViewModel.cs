@@ -22,7 +22,7 @@ namespace MSL.controls
         private void MaximizeWindow(object obj)
         {
             var window = obj as Window;
-            switch (window.WindowState)
+            switch(window.WindowState)
             {
                 case WindowState.Normal:
                     SystemCommands.MaximizeWindow(window);

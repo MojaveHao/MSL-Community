@@ -81,14 +81,14 @@ namespace MSL.pages
                         {
                             Dispatcher.Invoke(new Action(delegate
                             {
-                                var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
+                                var mainwindow = (MainWindow)Window.GetWindow(this);
                                 DialogShow.ShowMsg(mainwindow, noticeLabText, "公告", false, "确定");
                             }));
                         }
                     }
                     else
                     {
-                        noticeLabText = "获取公告失败！请检查网络连接是否正常或联系作者进行解决！";
+                        noticeLabText = "获取公告失败";
                     }
                     JObject keyValues1 = (JObject)keyValues["recommends"];
                     if (keyValues["recommends"] != null)
@@ -199,7 +199,7 @@ namespace MSL.pages
                         }
                         else
                         {
-                            noticeLabText = "获取公告失败！请检查网络连接是否正常或联系作者进行解决！";
+                            noticeLabText = "获取公告失败";
                         }
                         JObject keyValues1 = (JObject)keyValues["recommends"];
                         if (keyValues["recommends"] != null)
@@ -279,7 +279,7 @@ namespace MSL.pages
             }
             catch
             {
-                noticeLabText = "获取公告失败！请检查网络连接是否正常或联系作者进行解决！";
+                noticeLabText = "获取公告失败";
             }
 
             Dispatcher.Invoke(new Action(delegate
@@ -344,8 +344,8 @@ namespace MSL.pages
             }
             if (startServerDropdown.SelectedIndex == -1)
             {
-                var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
-                System.Windows.Window wn = new forms.CreateServer();
+                var mainwindow = (MainWindow)Window.GetWindow(this);
+                Window wn = new forms.CreateServer();
                 wn.Owner = mainwindow;
                 wn.ShowDialog();
                 GetServerConfig();
