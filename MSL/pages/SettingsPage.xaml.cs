@@ -719,13 +719,9 @@ namespace MSL.pages
                 Growl.Error("检查更新失败！");
             }
         }
-        /*
-[DllImport("MSL-BCLinker.dll", EntryPoint = "send_msg_to_bc")]
-private extern static int SendMsgToBC(string cmd, string port);
-private void bcLink_Click(object sender, RoutedEventArgs e)
-{
-   SendMsgToBC("end", "11451");
-}
-*/
+        private void SendInfo(object sender, RoutedEventArgs e)
+        {
+            Growl.Info("发送的信息:"+SendMsg.Text);
+        }
     }
 }
