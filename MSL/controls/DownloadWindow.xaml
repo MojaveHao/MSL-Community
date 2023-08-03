@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MSL"
         mc:Ignorable="d"
         Height="100" Width="400" WindowStartupLocation="CenterOwner" Background="{x:Null}" WindowStyle="None" AllowsTransparency="True" ShowInTaskbar="False">
     <Border x:Name="mainBorder" CornerRadius="10" Background="{DynamicResource DialogBrush2}">

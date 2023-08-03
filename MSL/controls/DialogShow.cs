@@ -4,16 +4,18 @@ namespace MSL.controls
 {
     public class DialogShow
     {
-        public static bool ShowMsg(System.Windows.Window window, string dialogText, string dialogTitle, bool primaryBtnVisible = false, string closeText = "确定",string primaryText="确定")
+        public static bool ShowMsg(System.Windows.Window window, string dialogText, string dialogTitle, bool primaryBtnVisible = false, string closeText = "确定", string primaryText = "确定")
         {
             try
             {
-                window.Focus();
+                _ = window.Focus();
                 var dialog = Dialog.Show(string.Empty);
-                MessageDialog messageDialog = new MessageDialog(window, dialogText, dialogTitle, primaryBtnVisible, closeText, primaryText);
-                messageDialog.Owner = window;
-                messageDialog.ShowDialog();
-                window.Focus();
+                MessageDialog messageDialog = new MessageDialog(window, dialogText, dialogTitle, primaryBtnVisible, closeText, primaryText)
+                {
+                    Owner = window
+                };
+                _ = messageDialog.ShowDialog();
+                _ = window.Focus();
                 dialog.Close();
                 if (MessageDialog._dialogReturn)
                 {
@@ -23,7 +25,7 @@ namespace MSL.controls
                 {
                     return false;
                 }
-                
+
             }
             catch
             {
@@ -35,12 +37,14 @@ namespace MSL.controls
             userInput = string.Empty;
             try
             {
-                window.Focus();
+                _ = window.Focus();
                 var dialog = Dialog.Show(string.Empty);
-                InputDialog inputDialog = new InputDialog(window, dialogText, textboxText);
-                inputDialog.Owner = window;
-                inputDialog.ShowDialog();
-                window.Focus();
+                InputDialog inputDialog = new InputDialog(window, dialogText, textboxText)
+                {
+                    Owner = window
+                };
+                _ = inputDialog.ShowDialog();
+                _ = window.Focus();
                 dialog.Close();
                 if (InputDialog._dialogReturn)
                 {
@@ -58,16 +62,18 @@ namespace MSL.controls
             }
         }
 
-        public static bool ShowDownload(System.Windows.Window window, string downloadurl, string downloadPath, string filename,string downloadinfo)
+        public static bool ShowDownload(System.Windows.Window window, string downloadurl, string downloadPath, string filename, string downloadinfo)
         {
             try
             {
-                window.Focus();
+                _ = window.Focus();
                 var dialog = Dialog.Show(string.Empty);
-                DownloadWindow download = new DownloadWindow(downloadurl, downloadPath, filename, downloadinfo);
-                download.Owner = window;
-                download.ShowDialog();
-                window.Focus();
+                DownloadWindow download = new DownloadWindow(downloadurl, downloadPath, filename, downloadinfo)
+                {
+                    Owner = window
+                };
+                _ = download.ShowDialog();
+                _ = window.Focus();
                 dialog.Close();
                 if (DownloadWindow.isStopDwn)
                 {
@@ -82,7 +88,7 @@ namespace MSL.controls
             {
                 return false;
             }
-            
+
         }
     }
 }

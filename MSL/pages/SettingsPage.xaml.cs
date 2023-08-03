@@ -39,7 +39,7 @@ namespace MSL.pages
         private void setdefault_Click(object sender, RoutedEventArgs e)
         {
             var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
-            DialogShow.ShowMsg(mainwindow, "恢复默认设置会清除MSL文件夹内的所有文件，请您谨慎选择！", "警告", true, "取消");
+            _ = DialogShow.ShowMsg(mainwindow, "恢复默认设置会清除MSL文件夹内的所有文件，请您谨慎选择！", "警告", true, "取消");
             if (MessageDialog._dialogReturn)
             {
                 MessageDialog._dialogReturn = false;
@@ -50,7 +50,7 @@ namespace MSL.pages
                 catch
                 {
                 }
-                Process.Start(Application.ResourceAssembly.Location);
+                _ = Process.Start(Application.ResourceAssembly.Location);
                 Process.GetCurrentProcess().Kill();
             }
         }
@@ -62,11 +62,11 @@ namespace MSL.pages
                 C_NotifyIcon();
                 try
                 {
-                    string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                    string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                     JObject jobject = JObject.Parse(jsonString);
                     jobject["notifyIcon"] = "False";
                     string convertString = Convert.ToString(jobject);
-                    File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                    File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                     Growl.Success("关闭成功！");
                     return;
                 }
@@ -190,7 +190,7 @@ namespace MSL.pages
                         JObject _json = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\ServerList.json", Encoding.UTF8));
                         foreach (var item in _json)
                         {
-                            serverListBox.Items.Add(item.Value["name"]);
+                            _ = serverListBox.Items.Add(item.Value["name"]);
                             _runServerList.Add(item.Key);
                             serverListBox.SelectedIndex = 0;
                         }
@@ -206,7 +206,7 @@ namespace MSL.pages
 
         private void useidea_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://docs.waheal.top/#/?id=msl%e5%bc%80%e6%9c%8d%e6%95%99%e7%a8%8b");
+            _ = Process.Start("https://docs.waheal.top/#/?id=msl%e5%bc%80%e6%9c%8d%e6%95%99%e7%a8%8b");
         }
 
         private void openserversOnStart_Click(object sender, RoutedEventArgs e)
@@ -518,10 +518,12 @@ namespace MSL.pages
         private void changeBackImg_Click(object sender, RoutedEventArgs e)
         {
             var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
-            OpenFileDialog openfile = new OpenFileDialog();
-            openfile.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            openfile.Title = "请选择文件";
-            openfile.Filter = "所有文件类型|*.*";
+            OpenFileDialog openfile = new OpenFileDialog
+            {
+                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
+                Title = "请选择文件",
+                Filter = "所有文件类型|*.*"
+            };
             var res = openfile.ShowDialog();
             if (res == true)
             {
@@ -662,7 +664,7 @@ namespace MSL.pages
                             int IndexofA1 = pageHtml.IndexOf(strtempa1);
                             string Ru1 = pageHtml.Substring(IndexofA1 + 2);
                             string aaa1 = Ru1.Substring(0, Ru1.IndexOf(" *"));
-                            DialogShow.ShowDownload(mainwindow, aaa1, AppDomain.CurrentDomain.BaseDirectory, "MSL" + aaa + ".exe", "下载新版本中……");
+                            _ = DialogShow.ShowDownload(mainwindow, aaa1, AppDomain.CurrentDomain.BaseDirectory, "MSL" + aaa + ".exe", "下载新版本中……");
                             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "MSL" + aaa + ".exe"))
                             {
                                 /*
@@ -691,14 +693,14 @@ namespace MSL.pages
                                 delProcess.StartInfo.Arguments = cmdCommand;
                                 Directory.SetCurrentDirectory(newExeDir);
                                 delProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                delProcess.Start();
+                                _ = delProcess.Start();
 
                                 // 退出当前进程
                                 Process.GetCurrentProcess().Kill();
                             }
                             else
                             {
-                                MessageBox.Show("更新失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                                _ = MessageBox.Show("更新失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
                         }
                         else

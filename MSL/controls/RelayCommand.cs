@@ -8,7 +8,7 @@ namespace MSL.controls
         public Action<object> ExecuteAction { get; }
         public RelayCommand(Action<object> executeAction)
         {
-            ExecuteAction= executeAction;
+            ExecuteAction = executeAction;
         }
 
         public event EventHandler CanExecuteChanged

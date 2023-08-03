@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:MSL"
         xmlns:controls="clr-namespace:MSL.controls"
         x:Class="MSL.MainWindow"
-        mc:Ignorable="d" Width="870" Height="500" MinWidth="800" MinHeight="500"
+        mc:Ignorable="d" Width="870" Height="500" MinWidth="870" MinHeight="500" Background="{DynamicResource BackgroundBrush}"
         WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Closing="Window_Closing" Icon="icon.ico"
-        Title="Minecraft Server Launcher Community" ResizeMode="CanResize"  Background="{DynamicResource BackgroundBrush}"
+        Title="Minecraft Server Launcher Community" ResizeMode="CanResize"
         Activated="Window_Activated" Deactivated="Window_Deactivated" SizeChanged="Window_SizeChanged">
     <Window.Resources>
         <ControlTemplate x:Key="SideMenuTemplate" TargetType="{x:Type ListBoxItem}">
@@ -51,7 +52,7 @@
         </ControlTemplate>
     </Window.Resources>
     <WindowChrome.WindowChrome>
-        <WindowChrome GlassFrameThickness="-1" CaptionHeight="40"/>
+        <WindowChrome CaptionHeight="40"/>
     </WindowChrome.WindowChrome>
     <Window.DataContext>
         <controls:WindowViewModel/>
@@ -142,7 +143,7 @@
                 <StackPanel x:Name="GrowlPanel" hc:Growl.GrowlParent="True" VerticalAlignment="Top" Margin="0,10,10,10" />
             </ScrollViewer>
 
-            <hc:NotifyIcon x:Name="MainNoticyIcon" Text="Minecraft Server Launcher Community" Visibility="Hidden" MouseDoubleClick="MainNoticyIcon_MouseDoubleClick">
+            <hc:NotifyIcon x:Name="MainNoticyIcon" Text="MSLCommunity" Visibility="Hidden" MouseDoubleClick="MainNoticyIcon_MouseDoubleClick">
                 <hc:NotifyIcon.ContextMenu>
                     <ContextMenu>
                         <MenuItem Command="hc:ControlCommands.PushMainWindow2Top" Header="打开主界面"/>

@@ -40,7 +40,7 @@ namespace MSL.pages
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "MSL\\P2Pfrpc"))
             {
                 string a = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\P2Pfrpc");
-                if(a.IndexOf("role = visitor")+1!=0)
+                if (a.IndexOf("role = visitor") + 1 != 0)
                 {
                     visiterExp.IsExpanded = true;
                 }
@@ -51,10 +51,10 @@ namespace MSL.pages
             }
             else
             {
-                var mainwindow=(MainWindow)Window.GetWindow(this);
-                if (ShowWarn==true)
+                var mainwindow = (MainWindow)Window.GetWindow(this);
+                if (ShowWarn == true)
                 {
-                    DialogShow.ShowMsg(mainwindow, "注意：此功能目前不稳定，无法穿透所有类型的NAT，若联机失败，请尝试开服务器并使用内网映射联机！\r\n该功能可能需要正版账户，若无法联机，请从网络上寻找解决方法或尝试开服务器并使用内网映射联机！", "警告");
+                    _ = DialogShow.ShowMsg(mainwindow, "注意：此功能目前不稳定，无法穿透所有类型的NAT，若联机失败，请尝试开服务器并使用内网映射联机！\r\n该功能可能需要正版账户，若无法联机，请从网络上寻找解决方法或尝试开服务器并使用内网映射联机！", "警告");
                     ShowWarn = false;
                 }
                 masterExp.IsExpanded = true;
@@ -245,7 +245,7 @@ namespace MSL.pages
                         {
                             RefreshLink();
                             var mwindow = (MainWindow)Window.GetWindow(this);
-                            DialogShow.ShowDownload(mwindow, _dnfrpc, AppDomain.CurrentDomain.BaseDirectory + "MSL", "frpc.exe", "下载内网映射中...");
+                            _ = DialogShow.ShowDownload(mwindow, _dnfrpc, AppDomain.CurrentDomain.BaseDirectory + "MSL", "frpc.exe", "下载内网映射中...");
                             _dnfrpc = "";
                         }
                     }
@@ -253,7 +253,7 @@ namespace MSL.pages
                     {
                         RefreshLink();
                         var mwindow = (MainWindow)Window.GetWindow(this);
-                        DialogShow.ShowDownload(mwindow, _dnfrpc, AppDomain.CurrentDomain.BaseDirectory + "MSL", "frpc.exe", "更新内网映射中...");
+                        _ = DialogShow.ShowDownload(mwindow, _dnfrpc, AppDomain.CurrentDomain.BaseDirectory + "MSL", "frpc.exe", "更新内网映射中...");
                         _dnfrpc = "";
                         JObject jobject3 = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                         jobject3["frpcversion"] = "5";
@@ -264,7 +264,7 @@ namespace MSL.pages
                     {
                         RefreshLink();
                         var mwindow = (MainWindow)Window.GetWindow(this);
-                        DialogShow.ShowDownload(mwindow, _dnfrpc, AppDomain.CurrentDomain.BaseDirectory + "MSL", "frpc.exe", "下载内网映射中...");
+                        _ = DialogShow.ShowDownload(mwindow, _dnfrpc, AppDomain.CurrentDomain.BaseDirectory + "MSL", "frpc.exe", "下载内网映射中...");
                         _dnfrpc = "";
                     }
                 }
@@ -289,12 +289,12 @@ namespace MSL.pages
                 FRPCMD.StartInfo.RedirectStandardInput = true;
                 FRPCMD.StartInfo.RedirectStandardOutput = true;
                 FRPCMD.OutputDataReceived += new DataReceivedEventHandler(p_OutputDataReceived);
-                FRPCMD.Start();
+                _ = FRPCMD.Start();
                 FRPCMD.BeginOutputReadLine();
             }
             catch (Exception e)
             {
-                MessageBox.Show("出现错误，请检查是否有杀毒软件误杀并重试:" + e.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                _ = MessageBox.Show("出现错误，请检查是否有杀毒软件误杀并重试:" + e.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         void RefreshLink()
@@ -311,7 +311,7 @@ namespace MSL.pages
         {
             if (e.Data != null)
             {
-                Dispatcher.Invoke(ReadStdOutput, new object[] { e.Data });
+                _ = Dispatcher.Invoke(ReadStdOutput, new object[] { e.Data });
             }
         }
         private void ReadStdOutputAction(string msg)
@@ -337,7 +337,7 @@ namespace MSL.pages
                             FRPCMD.OutputDataReceived -= new DataReceivedEventHandler(p_OutputDataReceived);
                         }
                         catch
-                        {}
+                        { }
                     }
                     if (isMaster)
                     {
@@ -383,7 +383,7 @@ namespace MSL.pages
                             FRPCMD.OutputDataReceived -= new DataReceivedEventHandler(p_OutputDataReceived);
                         }
                         catch
-                        {}
+                        { }
                     }
                     if (isMaster)
                     {

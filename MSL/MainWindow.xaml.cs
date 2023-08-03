@@ -14,7 +14,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Xml.Linq;
 using Brush = System.Windows.Media.Brush;
 using MessageBox = System.Windows.MessageBox;
 using Window = System.Windows.Window;
@@ -53,24 +52,24 @@ namespace MSL
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Topmost = true;
+            Topmost = true;
             LoadingCircle loadingCircle = new LoadingCircle();
-            BodyGrid.Children.Add(loadingCircle);
+            _ = BodyGrid.Children.Add(loadingCircle);
             BodyGrid.RegisterName("loadingBar", loadingCircle);
-            this.Topmost = false;
+            Topmost = false;
             Thread thread = new Thread(AsyncLoadEvent);
             thread.Start();
         }
 
-        //[DllImport("kernel32.dll")]
-        //public static extern uint WinExec(string lpCmdLine, uint uCmdShow);
         private void AsyncLoadEvent()
         {
             //get serverlink
             try
             {
-                WebClient MyWebClient = new WebClient();
-                MyWebClient.Credentials = CredentialCache.DefaultCredentials;
+                WebClient MyWebClient = new WebClient
+                {
+                    Credentials = CredentialCache.DefaultCredentials
+                };
                 byte[] pageData = MyWebClient.DownloadData("https://waheal.oss-cn-hangzhou.aliyuncs.com/");
                 //serverLink = Encoding.UTF8.GetString(pageData);
                 string serverAddr = Encoding.UTF8.GetString(pageData);
@@ -84,13 +83,13 @@ namespace MSL
                 else
                 {
                     serverLink = "https://msl.waheal.top";
-                    Growl.Warning("MSL主服务器连接超时，已切换至备用服务器！");
+                    Growl.Warning("MSL主服务器连接超时,已切换至备用服务器");
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 serverLink = "https://msl.waheal.top";
-                Growl.Error("出现错误，已切换至备用服务器！");
+                Growl.Error("出现错误,已切换至备用服务器\n" + ex.Message);
             }
 
             //MessageBox.Show("GetLinkSuccess");
@@ -100,26 +99,19 @@ namespace MSL
                 //firstLauchEvent
                 if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + @"MSL"))
                 {
-                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + @"MSL");
+                    _ = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + @"MSL");
                 }
                 if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json"))
                 {
-                    Process.Start("https://www.waheal.top/eula.html");
                     Dispatcher.Invoke(new Action(delegate
                     {
-                        DialogShow.ShowMsg(this, "请阅读并同意MSL开服器使用协议：https://www.waheal.top/eula.html", "提示", true, "不同意", "同意");
-                        if (!MessageDialog._dialogReturn)
-                        {
-                            Close();
-                        }
-                        MessageDialog._dialogReturn = false;
                         File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", string.Format("{{{0}}}", "\n"));
                     }));
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                DialogShow.ShowMsg(this, "MSL在初始化加载过程中出现问题，请尝试用管理员身份运行MSL\n错误代码：" + ex.Message, "错误");
+                _ = DialogShow.ShowMsg(this, "MSL在初始化加载过程中出现问题\n" + ex.Message, "错误");
             }
 
             //MessageBox.Show("CheckDirSuccess");
@@ -144,14 +136,14 @@ namespace MSL
             catch
             { }
 
-            //检测是否配置了内网映射(新版已弃用，现改为删除frpc的key)
+            //删除frpc的key,不要问我为什么我也不知道
             try
             {
                 if (jsonObject["frpc"] != null)
                 {
                     string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                     JObject jobject = JObject.Parse(jsonString);
-                    jobject.Remove("frpc");
+                    _ = jobject.Remove("frpc");
                     string convertString = Convert.ToString(jobject);
                     File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 }
@@ -387,7 +379,7 @@ namespace MSL
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Err" + ex.Message);
+                _ = MessageBox.Show("Err" + ex.Message);
             }
             try
             {
@@ -407,7 +399,7 @@ namespace MSL
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Err" + ex.Message);
+                _ = MessageBox.Show("Err" + ex.Message);
             }
 
             //MessageBox.Show("AutoGetSuccess");
@@ -452,23 +444,13 @@ namespace MSL
                                 int IndexofA1 = pageHtml.IndexOf(strtempa1);
                                 string Ru1 = pageHtml.Substring(IndexofA1 + 2);
                                 string aaa1 = Ru1.Substring(0, Ru1.IndexOf(" *"));
-                                DialogShow.ShowDownload(this, aaa1, AppDomain.CurrentDomain.BaseDirectory, "MSL" + aaa + ".exe", "下载新版本中……");
+                                _ = DialogShow.ShowDownload(this, aaa1, AppDomain.CurrentDomain.BaseDirectory, "MSL" + aaa + ".exe", "下载新版本中……");
                                 if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "MSL" + aaa + ".exe"))
                                 {
-                                    /*
-                                    string vBatFile = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory) + @"\DEL.bat";
-                                    using (StreamWriter vStreamWriter = new StreamWriter(vBatFile, false, Encoding.Default))
-                                    {
-                                        vStreamWriter.Write(string.Format(":del\r\n del \"" + System.Windows.Forms.Application.ExecutablePath + "\"\r\n " + "if exist \"" + System.Windows.Forms.Application.ExecutablePath + "\" goto del\r\n " + "start /d \"" + AppDomain.CurrentDomain.BaseDirectory + "\" MSL" + aaa + ".exe" + "\r\n" + " del %0\r\n", AppDomain.CurrentDomain.BaseDirectory));
-                                    }
-                                    WinExec(vBatFile, 0);
-                                    Process.GetCurrentProcess().Kill();
-                                    */
                                     string oldExePath = Process.GetCurrentProcess().MainModule.ModuleName;
                                     string dwnExePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MSL" + aaa + ".exe");
                                     string newExeDir = AppDomain.CurrentDomain.BaseDirectory;
 
-                                    // 输出CMD命令以便调试
                                     string cmdCommand = "/C choice /C Y /N /D Y /T 1 & Del \"" + oldExePath + "\" & Ren \"" + "MSL" + aaa + ".exe" + "\" \"MSL.exe\" & start \"\" \"MSL.exe\"";
                                     //MessageBox.Show(cmdCommand);
 
@@ -481,35 +463,20 @@ namespace MSL
                                     delProcess.StartInfo.Arguments = cmdCommand;
                                     Directory.SetCurrentDirectory(newExeDir);
                                     delProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                    delProcess.Start();
+                                    _ = delProcess.Start();
 
                                     // 退出当前进程
                                     Process.GetCurrentProcess().Kill();
                                 }
-                                else
-                                {
-                                    MessageBox.Show("更新失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                                }
+                                else _ = MessageBox.Show("更新失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
-                            else
-                            {
-                                Growl.Error("您拒绝了更新新版本，若在此版本中遇到bug，请勿报告给作者！");
-                            }
+                            else Growl.Error("您拒绝了更新新版本，若在此版本中遇到bug，请勿报告给作者！");
                         }));
                     }
-                    else if (newVersion < version)
-                    {
-                        Growl.Info("当前版本高于正式版本，若使用中遇到BUG，请及时反馈！");
-                    }
-                    else
-                    {
-                        Growl.Success("您使用的开服器已是最新版本！");
-                    }
+                    else if (newVersion < version) Growl.Info("当前版本高于正式版本，若使用中遇到BUG，请及时反馈！");
+                    else Growl.Success("您使用的开服器已是最新版本！");
                 }
-                catch (Exception ex)
-                {
-                    Growl.Error("检查更新失败！" + ex.Message);
-                }
+                catch (Exception ex) { Growl.Error("检查更新失败！" + ex.Message); }
             }
 
             //MessageBox.Show("CheckUpdateSuccess");
@@ -624,7 +591,7 @@ namespace MSL
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Err" + ex.Message);
+                _ = MessageBox.Show("Err" + ex.Message);
             }
             //自动开启Frpc
             try
@@ -639,13 +606,13 @@ namespace MSL
                 }
                 else if (jsonObject["autoOpenFrpc"].ToString() == "True")
                 {
-                    Growl.Info("正在为你自动打开内网映射……");
+                    Growl.Info("内网映射启动中");
                     AutoOpenFrpc();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Err" + ex.Message);
+                _ = MessageBox.Show("Err" + ex.Message);
             }
 
             //MessageBox.Show("AutoEventSuccess");
@@ -682,7 +649,7 @@ namespace MSL
             if (MainNoticyIcon.Visibility == Visibility.Visible)
             {
                 e.Cancel = true;
-                this.Visibility = Visibility.Hidden;
+                Visibility = Visibility.Hidden;
                 return;
             }
             else if (CloseApp())
@@ -690,10 +657,7 @@ namespace MSL
                 Application.Current.Shutdown();
                 Process.GetCurrentProcess().Kill();
             }
-            else
-            {
-                e.Cancel = true;
-            }
+            else e.Cancel = true;
         }
         private bool CloseApp()
         {
@@ -702,20 +666,11 @@ namespace MSL
                 if (ServerList.RunningServerIDs != "" || FrpcPage.FRPCMD.HasExited == false || OnlinePage.FRPCMD.HasExited == false)
                 {
                     bool dialog = DialogShow.ShowMsg(this, "您的服务器、内网映射或联机功能正在运行中，关闭软件可能会让服务器进程在后台一直运行并占用资源！确定要继续关闭吗？\n注：如果想隐藏主窗口的话，请前往设置打开托盘图标", "警告", true, "取消");
-                    if (dialog == true)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    if (dialog == true) return true;
+                    else return false;
 
                 }
-                else
-                {
-                    return true;
-                }
+                else return true;
             }
             catch
             {
@@ -724,19 +679,10 @@ namespace MSL
                     if (FrpcPage.FRPCMD.HasExited == false || OnlinePage.FRPCMD.HasExited == false)
                     {
                         bool dialog = DialogShow.ShowMsg(this, "内网映射或联机功能正在运行中，关闭软件可能会让内网映射进程在后台一直运行并占用资源！确定要继续关闭吗？\n如果想隐藏主窗口的话，请前往设置打开托盘图标", "警告", true, "取消");
-                        if (dialog == true)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        if (dialog == true) return true;
+                        else return false;
                     }
-                    else
-                    {
-                        return true;
-                    }
+                    else return true;
                 }
                 catch
                 {
@@ -745,43 +691,25 @@ namespace MSL
                         if (OnlinePage.FRPCMD.HasExited == false)
                         {
                             bool dialog = DialogShow.ShowMsg(this, "联机功能正在运行中，关闭软件可能会让内网映射进程在后台一直运行并占用资源！确定要继续关闭吗？\n如果想隐藏主窗口的话，请前往设置打开托盘图标", "警告", true, "取消");
-                            if (dialog== true)
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
+                            if (dialog == true) return true;
+                            else return false;
                         }
-                        else
-                        {
-                            return true;
-                        }
+                        else return true;
                     }
-                    catch
-                    {
-                        return true;
-                    }
+                    catch { return true; }
                 }
             }
         }
 
         void CtrlNotifyIcon()//C_NotifyIcon
         {
-            if (MainNoticyIcon.Visibility==Visibility.Hidden)
-            {
-                MainNoticyIcon.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MainNoticyIcon.Visibility = Visibility.Hidden;
-            }
+            if (MainNoticyIcon.Visibility == Visibility.Hidden) MainNoticyIcon.Visibility = Visibility.Visible;
+            else MainNoticyIcon.Visibility = Visibility.Hidden;
         }
 
         void GotoFrpcPage()
         {
-            this.Focus();
+            _ = Focus();
             frame.Content = _frpcPage;
             SideMenu.SelectedIndex = 2;
         }
@@ -908,10 +836,10 @@ namespace MSL
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (this.WindowState == WindowState.Maximized)
+            if (WindowState == WindowState.Maximized)
             {
                 MainGrid.Margin = new Thickness(7);
-                
+
             }
             else
             {
@@ -921,7 +849,7 @@ namespace MSL
 
         private void MainNoticyIcon_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
-            this.Visibility = Visibility.Visible;
+            Visibility = Visibility.Visible;
         }
 
         private void NotifyClose_Click(object sender, RoutedEventArgs e)

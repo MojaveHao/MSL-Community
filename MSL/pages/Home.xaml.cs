@@ -37,10 +37,10 @@ namespace MSL.pages
             //version
             string noticeLabText = "";
 
-            Dispatcher.Invoke(new Action(delegate
+            Dispatcher.Invoke(() =>
             {
                 noticeLabText = noticeLab.Text;
-            }));
+            });
             string noticeversion1;
             try
             {
@@ -79,21 +79,21 @@ namespace MSL.pages
                         noticeLabText = keyValues["notice"].ToString();
                         if (noticeLabText != "")
                         {
-                            Dispatcher.Invoke(new Action(delegate
+                            Dispatcher.Invoke(() =>
                             {
-                                var mainwindow = (MainWindow)Window.GetWindow(this);
-                                DialogShow.ShowMsg(mainwindow, noticeLabText, "公告", false, "确定");
-                            }));
+                                var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
+                                _ = DialogShow.ShowMsg(mainwindow, noticeLabText, "公告", false, "确定");
+                            });
                         }
                     }
                     else
                     {
-                        noticeLabText = "获取公告失败";
+                        noticeLabText = "获取公告失败！请检查网络连接是否正常或联系作者进行解决！";
                     }
                     JObject keyValues1 = (JObject)keyValues["recommends"];
                     if (keyValues["recommends"] != null)
                     {
-                        Dispatcher.Invoke(new Action(delegate
+                        Dispatcher.Invoke(() =>
                         {
                             recommendBorder.Visibility = Visibility.Visible;
                             for (int x = 1; x < 100; x++)
@@ -115,12 +115,12 @@ namespace MSL.pages
                                     break;
                                 }
                             }
-                        }));
+                        });
                         int i = 0;
                         foreach (var x in keyValues1)
                         {
                             i++;
-                            Dispatcher.Invoke(new Action(delegate
+                            Dispatcher.Invoke(() =>
                             {
                                 Image image = new Image();
                                 if (i == 1)
@@ -143,11 +143,13 @@ namespace MSL.pages
                                 {
                                     image.Source = new BitmapImage(new Uri(MainWindow.serverLink + "/msl/recommendImg/" + i.ToString() + ".png"));
                                 }
-                                RecommendGrid.Children.Add(image);
+                                _ = RecommendGrid.Children.Add(image);
                                 RecommendGrid.RegisterName("RecImg" + i.ToString(), image);
 
-                                TextBlock textBlock = new TextBlock();
-                                textBlock.Text = x.Value.ToString();
+                                TextBlock textBlock = new TextBlock
+                                {
+                                    Text = x.Value.ToString()
+                                };
                                 textBlock.SetResourceReference(ForegroundProperty, "TextBlockBrush");
                                 if (i == 1)
                                 {
@@ -158,9 +160,9 @@ namespace MSL.pages
                                     textBlock.Margin = new Thickness(58, 35 + (53 * (i - 1)), 5, 5);
                                 }
                                 //textBlock.Margin = new Thickness(63, (35 + 10) * i, 5, 5);
-                                RecommendGrid.Children.Add(textBlock);
+                                _ = RecommendGrid.Children.Add(textBlock);
                                 RecommendGrid.RegisterName("RecText" + i.ToString(), textBlock);
-                            }));
+                            });
                         }
                     }
 
@@ -174,16 +176,16 @@ namespace MSL.pages
                     }
                     catch (Exception a)
                     {
-                        MessageBox.Show(a.Message);
+                        _ = MessageBox.Show(a.Message);
                     }
                 }
                 else if (noticeLabText == "")
                 {
                     Visibility noticevisible = Visibility.Visible;
-                    Dispatcher.Invoke(new Action(delegate
+                    Dispatcher.Invoke(() =>
                     {
                         noticevisible = noticeLab.Visibility;
-                    }));
+                    });
                     if (noticevisible == Visibility.Visible)
                     {
                         /*
@@ -199,12 +201,12 @@ namespace MSL.pages
                         }
                         else
                         {
-                            noticeLabText = "获取公告失败";
+                            noticeLabText = "获取公告失败！请检查网络连接是否正常或联系作者进行解决！";
                         }
                         JObject keyValues1 = (JObject)keyValues["recommends"];
                         if (keyValues["recommends"] != null)
                         {
-                            Dispatcher.Invoke(new Action(delegate
+                            Dispatcher.Invoke(() =>
                             {
                                 recommendBorder.Visibility = Visibility.Visible;
                                 for (int x = 1; x < 100; x++)
@@ -226,12 +228,12 @@ namespace MSL.pages
                                         break;
                                     }
                                 }
-                            }));
+                            });
                             int i = 0;
                             foreach (var x in keyValues1)
                             {
                                 i++;
-                                Dispatcher.Invoke(new Action(delegate
+                                Dispatcher.Invoke(() =>
                                 {
                                     Image image = new Image();
                                     if (i == 1)
@@ -254,11 +256,13 @@ namespace MSL.pages
                                     {
                                         image.Source = new BitmapImage(new Uri(MainWindow.serverLink + "/msl/recommendImg/" + i.ToString() + ".png"));
                                     }
-                                    RecommendGrid.Children.Add(image);
+                                    _ = RecommendGrid.Children.Add(image);
                                     RecommendGrid.RegisterName("RecImg" + i.ToString(), image);
 
-                                    TextBlock textBlock = new TextBlock();
-                                    textBlock.Text = x.Value.ToString();
+                                    TextBlock textBlock = new TextBlock
+                                    {
+                                        Text = x.Value.ToString()
+                                    };
                                     textBlock.SetResourceReference(ForegroundProperty, "TextBlockBrush");
                                     if (i == 1)
                                     {
@@ -269,9 +273,9 @@ namespace MSL.pages
                                         textBlock.Margin = new Thickness(58, 35 + (53 * (i - 1)), 5, 5);
                                     }
                                     //textBlock.Margin = new Thickness(63, (35 + 10) * i, 5, 5);
-                                    RecommendGrid.Children.Add(textBlock);
+                                    _ = RecommendGrid.Children.Add(textBlock);
                                     RecommendGrid.RegisterName("RecText" + i.ToString(), textBlock);
-                                }));
+                                });
                             }
                         }
                     }
@@ -279,10 +283,10 @@ namespace MSL.pages
             }
             catch
             {
-                noticeLabText = "获取公告失败";
+                noticeLabText = "获取公告失败！请检查网络连接是否正常或联系作者进行解决！";
             }
 
-            Dispatcher.Invoke(new Action(delegate
+            Dispatcher.Invoke(() =>
             {
                 if (noticeLabText == "")
                 {
@@ -297,7 +301,7 @@ namespace MSL.pages
                     noticeLab.Text = noticeLabText;
                 }
 
-            }));
+            });
         }
         void GetServerConfig()
         {
@@ -320,7 +324,7 @@ namespace MSL.pages
                 foreach (var item in jsonObject)
                 {
                     ServerList.serverid.Add(item.Key);
-                    startServerDropdown.Items.Add(item.Value["name"]);
+                    _ = startServerDropdown.Items.Add(item.Value["name"]);
                 }
                 startServerDropdown.SelectedIndex = i;
             }
@@ -344,10 +348,12 @@ namespace MSL.pages
             }
             if (startServerDropdown.SelectedIndex == -1)
             {
-                var mainwindow = (MainWindow)Window.GetWindow(this);
-                Window wn = new forms.CreateServer();
-                wn.Owner = mainwindow;
-                wn.ShowDialog();
+                var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
+                System.Windows.Window wn = new forms.CreateServer
+                {
+                    Owner = mainwindow
+                };
+                _ = wn.ShowDialog();
                 GetServerConfig();
             }
             else

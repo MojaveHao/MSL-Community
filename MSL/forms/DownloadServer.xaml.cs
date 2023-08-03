@@ -7,12 +7,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using File = System.IO.File;
@@ -22,7 +20,7 @@ namespace MSL.pages
     /// <summary>
     /// DownloadServer.xaml 的交互逻辑
     /// </summary>
-    public partial class DownloadServer : Window
+    public partial class DownloadServer : HandyControl.Controls.Window
     {
         //public static event DeleControl DownComplete;
         //List<string> serverurl = new List<string>();
@@ -32,12 +30,10 @@ namespace MSL.pages
         public static string downloadServerBase;
         public static string downloadServerName;
         public static string downloadServerJava;
-        public static string downloadServerArgs;
         //public static string autoupdateserver="&";
         public DownloadServer()
         {
             downloadServerName = string.Empty;
-            downloadServerArgs = string.Empty;
             InitializeComponent();
         }
         string downPath = "";
@@ -50,9 +46,9 @@ namespace MSL.pages
                 int url = serverlist1.SelectedIndex;
                 //string filename = serverlist.SelectedItem.ToString();
                 string downUrl = serverdownurl[url].ToString();
-                
+
                 //MessageBox.Show(downUrl);
-                
+
                 if (serverlist.SelectedItem.ToString().IndexOf("（") + 1 != 0)
                 {
                     if (serverlist1.SelectedItem.ToString().IndexOf("（") + 1 != 0)
@@ -80,17 +76,17 @@ namespace MSL.pages
                         filename = serverlist.SelectedItem.ToString() + "-" + serverlist1.SelectedItem.ToString() + ".jar";
                     }
                 }
-                bool dwnDialog= DialogShow.ShowDownload(this, downUrl, downPath, filename, "下载服务端中……");
+                bool dwnDialog = DialogShow.ShowDownload(this, downUrl, downPath, filename, "下载服务端中……");
                 if (!dwnDialog)
                 {
-                    DialogShow.ShowMsg(this, "下载取消！", "提示");
+                    _ = DialogShow.ShowMsg(this, "下载取消！", "提示");
                     return;
                 }
                 if (File.Exists(downPath + @"\" + filename))
                 {
                     if (filename.IndexOf("Forge") + 1 != 0)
                     {
-                        DialogShow.ShowMsg(this,"检测到您下载的是Forge端，开服器将自动进行安装操作，稍后请您不要随意移动鼠标且不要随意触碰键盘，耐心等待安装完毕！\n注：开服器已经把安装地址复制，如果Forge安装窗口弹出很久后没有任何改动的话，请手动选择第二个选项，然后把地址粘贴进去进行安装", "提示");
+                        _ = DialogShow.ShowMsg(this, "检测到您下载的是Forge端，开服器将自动进行安装操作，稍后请您不要随意移动鼠标且不要随意触碰键盘，耐心等待安装完毕！", "提示");
                         InstallForge();
                     }
                     else
@@ -101,7 +97,7 @@ namespace MSL.pages
                 }
                 else
                 {
-                    DialogShow.ShowMsg(this,"下载失败！","错误");
+                    _ = DialogShow.ShowMsg(this, "下载失败！", "错误");
                 }
             }
         }
@@ -118,13 +114,13 @@ namespace MSL.pages
                     MainWindow.serverLink = "https://msl.waheal.top";
                 }
             }
-            Dispatcher.Invoke(new Action(delegate
+            Dispatcher.Invoke(() =>
             {
                 serverlist.ItemsSource = null;
                 serverlist1.ItemsSource = null;
                 //serverurl.Clear();
                 serverdownurl = null;
-            }));
+            });
             try
             {
                 /*
@@ -146,27 +142,27 @@ namespace MSL.pages
                 */
                 string jsonData = Functions.Get("serverlist");
                 string[] serverTypes = JsonConvert.DeserializeObject<string[]>(jsonData);
-                Dispatcher.Invoke(new Action(delegate
+                Dispatcher.Invoke(() =>
                 {
                     /*
                     foreach (var serverType in serverTypes)
                     {
                         serverlist.Items.Add(serverType);
                     }*/
-                    serverlist.ItemsSource=serverTypes;
+                    serverlist.ItemsSource = serverTypes;
 
                     serverlist.SelectedIndex = 0;
                     getservermsg.Visibility = Visibility.Hidden;
                     lCircle.Visibility = Visibility.Hidden;
-                }));
+                });
             }
-            catch(Exception a)
+            catch (Exception a)
             {
-                Dispatcher.Invoke(new Action(delegate
+                Dispatcher.Invoke(() =>
                 {
                     getservermsg.Text = "获取服务端失败！请重试" + a.Message;
                     lCircle.Visibility = Visibility.Hidden;
-                }));
+                });
             }
             //return serverTypes;
             /*
@@ -215,18 +211,18 @@ namespace MSL.pages
                     //MessageBox.Show(jsonObject.ToString());
                     foreach (var x in jsonObject)
                     {
-                        Dispatcher.Invoke(new Action(delegate
+                        Dispatcher.Invoke(() =>
                         {
                             serverlist.Items.Add(x.Key);
-                        }));
+                        });
                         //MessageBox.Show( x.Value.ToString(), x.Key);
                     }
-                    Dispatcher.Invoke(new Action(delegate
+                    Dispatcher.Invoke(() =>
                     {
                         serverlist.SelectedIndex = 0;
                         getservermsg.Visibility = Visibility.Hidden;
                         lCircle.Visibility = Visibility.Hidden;
-                    }));
+                    });
                 }
                 catch
                 {
@@ -234,12 +230,12 @@ namespace MSL.pages
             }
             catch (Exception a)
             {
-                Dispatcher.Invoke(new Action(delegate
+                Dispatcher.Invoke(() =>
                 {
                     getservermsg.Text = "获取服务端失败！请重试" + a.Message;
                     lCircle.Visibility = Visibility.Hidden;
                     //File.Delete(AppDomain.CurrentDomain.BaseDirectory + @"MSL/serverlist.json");
-                }));
+                });
             }
             */
         }
@@ -257,7 +253,7 @@ namespace MSL.pages
             try
             {
                 int serverName = 0;
-                Dispatcher.Invoke(new Action(delegate
+                Dispatcher.Invoke(() =>
                 {
                     serverlist1.ItemsSource = null;
                     //serverurl.Clear();
@@ -266,7 +262,7 @@ namespace MSL.pages
                     lCircle.Visibility = Visibility.Visible;
                     serverName = serverlist.SelectedIndex;
                     //serverName = serverlist.SelectedItem.ToString();
-                }));
+                });
                 try
                 {
                     JObject patientinfo = new JObject();
@@ -275,14 +271,14 @@ namespace MSL.pages
                     string resultData = Functions.Post("serverlist", 0, sendData);
                     JObject serverDetails = JObject.Parse(resultData);
                     List<JProperty> sortedProperties = serverDetails.Properties().OrderByDescending(p => Functions.VersionCompare(p.Name)).ToList();
-                    Dispatcher.Invoke(new Action(delegate
+                    Dispatcher.Invoke(() =>
                     {
                         serverlist1.ItemsSource = sortedProperties.Select(p => p.Name).ToList();
                         serverdownurl = sortedProperties.Select(p => p.Value.ToString()).ToList();
                         //serverlist.SelectedIndex = 0;
                         getservermsg.Visibility = Visibility.Hidden;
                         lCircle.Visibility = Visibility.Hidden;
-                    }));
+                    });
                 }
                 catch
                 {
@@ -291,38 +287,38 @@ namespace MSL.pages
                         JObject patientinfo = new JObject();
                         patientinfo["server_name"] = serverName;
                         string sendData = JsonConvert.SerializeObject(patientinfo);
-                        string resultData = Functions.Post("serverlist", 0, sendData,"https://api.waheal.top");
+                        string resultData = Functions.Post("serverlist", 0, sendData, "https://api.waheal.top");
                         JObject serverDetails = JObject.Parse(resultData);
                         List<JProperty> sortedProperties = serverDetails.Properties().OrderByDescending(p => Functions.VersionCompare(p.Name)).ToList();
-                        Dispatcher.Invoke(new Action(delegate
+                        Dispatcher.Invoke(() =>
                         {
                             serverlist1.ItemsSource = sortedProperties.Select(p => p.Name).ToList();
                             serverdownurl = sortedProperties.Select(p => p.Value.ToString()).ToList();
                             //serverlist.SelectedIndex = 0;
                             getservermsg.Visibility = Visibility.Hidden;
                             lCircle.Visibility = Visibility.Hidden;
-                        }));
+                        });
                     }
-                    catch(Exception a)
+                    catch (Exception a)
                     {
-                        Dispatcher.Invoke(new Action(delegate
+                        Dispatcher.Invoke(() =>
                         {
                             getservermsg.Text = "获取服务端失败！请重试" + a.Message;
                             lCircle.Visibility = Visibility.Hidden;
-                        }));
+                        });
                     }
                 }
             }
-            catch(Exception a)
+            catch (Exception a)
             {
-                Dispatcher.Invoke(new Action(delegate
+                Dispatcher.Invoke(() =>
                 {
                     getservermsg.Text = "获取服务端失败！请重试" + a.Message;
                     lCircle.Visibility = Visibility.Hidden;
-                }));
+                });
             }
             /*
-            Dispatcher.Invoke(new Action(delegate
+            Dispatcher.Invoke(() =>
             {
                 try
                 {
@@ -354,42 +350,10 @@ namespace MSL.pages
                 {
                     MessageBox.Show("获取下载链接失败！" + ex.Message);
                 }
-            }));
+            });
             */
         }
 
-        /// <summary>
-        /// 找到窗口
-        /// </summary>
-        /// <param name="lpClassName">窗口类名(例：Button)</param>
-        /// <param name="lpWindowName">窗口标题</param>
-        /// <returns></returns>
-        [DllImport("user32.dll", EntryPoint = "FindWindow")]
-        private extern static IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-        /// <summary>
-        /// 找到窗口
-        /// </summary>
-        /// <param name="hwndParent">父窗口句柄（如果为空，则为桌面窗口）</param>
-        /// <param name="hwndChildAfter">子窗口句柄（从该子窗口之后查找）</param>
-        /// <param name="lpszClass">窗口类名(例：Button</param>
-        /// <param name="lpszWindow">窗口标题</param>
-        /// <returns></returns>
-        [DllImport("user32.dll", EntryPoint = "FindWindowEx")]
-        private extern static IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
-
-        /// <summary>
-        /// 发送消息
-        /// </summary>
-        /// <param name="hwnd">消息接受窗口句柄</param>
-        /// <param name="wMsg">消息</param>
-        /// <param name="wParam">指定附加的消息特定信息</param>
-        /// <param name="lParam">指定附加的消息特定信息</param>
-        /// <returns></returns>
-        [DllImport("user32.dll", EntryPoint = "SendMessageA")]
-        private static extern int SendMessage(IntPtr hwnd, uint wMsg, int wParam, int lParam);
-
-        const int WM_SETFOCUS = 0x07;
         void InstallForge()
         {
             string forgeVersion;
@@ -411,87 +375,16 @@ namespace MSL.pages
             else
             {
                 Match match = Regex.Match(serverDownUrl, @"forge-([\w.-]+)-installer");
-                forgeVersion = match.Groups[1].Value.Split('-')[0];
+                forgeVersion = match.Groups[1].Value;
             }
+            Directory.SetCurrentDirectory(downloadServerBase);
             Process process = new Process();
             process.StartInfo.FileName = downloadServerJava;
-            process.StartInfo.Arguments = "-jar " + downPath + @"\" + filename;
-            Directory.SetCurrentDirectory(downloadServerBase);
-            process.Start();
+            process.StartInfo.Arguments = "-jar " + downPath + @"\" + filename + " -installServer";
+            _ = process.Start();
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             try
             {
-                while (!process.HasExited)
-                {
-                    IntPtr maindHwnd = FindWindow(null, "Mod system installer");//主窗口标题
-                    if (maindHwnd != IntPtr.Zero)
-                    {
-                        SendMessage(maindHwnd, WM_SETFOCUS, 0, 0);
-                        System.Windows.Clipboard.SetDataObject(downloadServerBase);
-                        if (filename.IndexOf("1.12") + 1 != 0 || filename.IndexOf("1.13") + 1 != 0 || filename.IndexOf("1.14") + 1 != 0 || filename.IndexOf("1.15") + 1 != 0)
-                        {
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{DOWN}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{ENTER}");
-                            Thread.Sleep(500);
-                            SendKeys.SendWait("{DELETE}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("^{v}");
-                            Thread.Sleep(500);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(500);
-                            SendKeys.SendWait("{ENTER}");
-                            Thread.Sleep(500);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{ENTER}");
-                            break;
-                        }
-                        else
-                        {
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{DOWN}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{ENTER}");
-                            Thread.Sleep(500);
-                            SendKeys.SendWait("{DELETE}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("^{v}");
-                            Thread.Sleep(500);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(500);
-                            SendKeys.SendWait("{ENTER}");
-                            Thread.Sleep(500);
-                            SendKeys.SendWait("{Tab}");
-                            Thread.Sleep(200);
-                            SendKeys.SendWait("{ENTER}");
-                            break;
-                        }
-                    }
-                    Thread.Sleep(1000);
-                }
 
                 while (!process.HasExited)
                 {
@@ -504,8 +397,7 @@ namespace MSL.pages
                 text = text.Replace("@user_jvm_args.txt", "");*/
                 if (File.Exists(downloadServerBase + "\\libraries\\net\\minecraftforge\\forge\\" + forgeVersion + "\\win_args.txt"))
                 {
-                    downloadServerName = "";
-                    downloadServerArgs= "@libraries/net/minecraftforge/forge/" + forgeVersion + "/win_args.txt %*";
+                    downloadServerName = "@libraries/net/minecraftforge/forge/" + forgeVersion + "/win_args.txt %*";
                     //CreateServer.isCreateForge = true;
                     Close();
                 }
@@ -522,38 +414,31 @@ namespace MSL.pages
                         }
                         else
                         {
-                            downloadServerName = "";
+                            _ = DialogShow.ShowMsg(this, "下载失败,请多次尝试或使用代理再试！", "错误");
                         }
                     }
-                    if (downloadServerName == "")
-                    {
-                        DialogShow.ShowMsg(this, "下载失败,请多次尝试或使用代理再试！", "错误");
-                    }
-                    else
-                    {
-                        Close();
-                    }
+                    Close();
                 }
             }
             catch
             {
-                DialogShow.ShowMsg(this, "下载失败！", "错误");
+                _ = DialogShow.ShowMsg(this, "下载失败！", "错误");
             }
         }
-        
+
         private void openSpigot_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://www.spigotmc.org/");
+            _ = Process.Start("https://www.spigotmc.org/");
         }
 
         private void openPaper_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://papermc.io/");
+            _ = Process.Start("https://papermc.io/");
         }
 
         private void openMojang_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://www.minecraft.net/zh-hans/download/server");
+            _ = Process.Start("https://www.minecraft.net/zh-hans/download/server");
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

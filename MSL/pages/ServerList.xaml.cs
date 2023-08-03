@@ -30,7 +30,6 @@ namespace MSL.pages
         public static bool ControlSetPMTab = false;
         public static List<string> serverid = new List<string>();
         public static string RunningServerIDs = "";
-        public static bool ShowWarn = true;
 
         class ServerInfo
         {
@@ -91,8 +90,8 @@ namespace MSL.pages
             forms.CreateServer window = new forms.CreateServer();
             var mainwindow = (MainWindow)Window.GetWindow(this);
             window.Owner = mainwindow;
-            window.ShowDialog();
-            mainwindow.Focus();
+            _ = window.ShowDialog();
+            _ = mainwindow.Focus();
             GetServerConfig();
             Growl.Success("刷新成功！");
         }
@@ -111,22 +110,22 @@ namespace MSL.pages
                 serverid.Clear();
 
                 JObject jsonObject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\ServerList.json", Encoding.UTF8));
-                foreach(var item in jsonObject)
+                foreach (var item in jsonObject)
                 {
                     serverid.Add(item.Key);
                     if (File.Exists(item.Value["base"].ToString() + "\\server-icon.png"))
                     {
-                        serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), item.Value["base"].ToString() + "\\server-icon.png", "未运行", Brushes.Green));
+                        _ = serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), item.Value["base"].ToString() + "\\server-icon.png", "未运行", Brushes.Green));
                         StateCheck();
                     }
                     else if (item.Value["core"].ToString().IndexOf("forge") + 1 != 0 || item.Value["core"].ToString() == "")
                     {
-                        serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), "pack://application:,,,/images/150px-Anvil.png", "未运行", Brushes.Green));
+                        _ = serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), "pack://application:,,,/images/150px-Anvil.png", "未运行", Brushes.Green));
                         StateCheck();
                     }
                     else
                     {
-                        serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), "pack://application:,,,/images/150px-Impulse_Command_Block.png", "未运行", Brushes.MediumSeaGreen));
+                        _ = serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), "pack://application:,,,/images/150px-Impulse_Command_Block.png", "未运行", Brushes.MediumSeaGreen));
                         StateCheck();
                     }
                 }
@@ -134,26 +133,22 @@ namespace MSL.pages
             catch
             {
                 var mainwindow = (MainWindow)Window.GetWindow(this);
-                if (ShowWarn == true)
-                {
-                    DialogShow.ShowMsg(mainwindow, "开服器检测到配置文件出现了错误，是第一次使用吗？\n是否创建一个新的服务器？", "警告", true, "取消");
-                    ShowWarn = false;
-                }
+                _ = DialogShow.ShowMsg(mainwindow, "开服器检测到配置文件出现了错误，是第一次使用吗？\n是否创建一个新的服务器？", "警告", true, "取消");
                 if (MessageDialog._dialogReturn == true)
                 {
                     Window wn = new forms.CreateServer();
                     wn.Owner = mainwindow;
-                    wn.ShowDialog();
+                    _ = wn.ShowDialog();
                     GetServerConfig();
                 }
             }
         }
-        
+
         private void serverList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             StartServerEvent();
         }
-        
+
 
         private void startServer_Click(object sender, RoutedEventArgs e)
         {
@@ -196,7 +191,7 @@ namespace MSL.pages
                 */
                 runner.Show();
             }
-            catch (Exception ex) { MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
+            catch (Exception ex) { _ = MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
         }
 
         private void setServer_Click(object sender, RoutedEventArgs e)
@@ -216,7 +211,7 @@ namespace MSL.pages
                 ControlSetServerTab = true;
                 runner.Show();
             }
-            catch (Exception ex) { MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
+            catch (Exception ex) { _ = MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
         }
 
         private void delServer_Click(object sender, RoutedEventArgs e)
@@ -226,7 +221,7 @@ namespace MSL.pages
         void DelServerEvent()
         {
             var mainwindow = (MainWindow)Window.GetWindow(this);
-            DialogShow.ShowMsg(mainwindow, "您确定要删除该服务器吗？", "提示", true, "取消");
+            _ = DialogShow.ShowMsg(mainwindow, "您确定要删除该服务器吗？", "提示", true, "取消");
             if (!MessageDialog._dialogReturn)
             {
                 return;
@@ -240,9 +235,9 @@ namespace MSL.pages
             }
             try
             {
-                
+
                 //serverList.Items.Remove(serverList.SelectedItem);
-                DialogShow.ShowMsg(mainwindow, "是否删除该服务器的目录？（服务器目录中的所有文件都会被移至回收站）", "提示", true, "取消");
+                _ = DialogShow.ShowMsg(mainwindow, "是否删除该服务器的目录？（服务器目录中的所有文件都会被移至回收站）", "提示", true, "取消");
                 if (MessageDialog._dialogReturn)
                 {
                     //_server.ServerIcon = "/images/150px-Impulse_Command_Block.png";
@@ -256,12 +251,12 @@ namespace MSL.pages
             }
             catch (Exception ex)
             {
-                DialogShow.ShowMsg(mainwindow, "服务器目录删除失败！\n" + ex.Message, "警告", false, "确定");
+                _ = DialogShow.ShowMsg(mainwindow, "服务器目录删除失败！\n" + ex.Message, "警告", false, "确定");
             }
             try
             {
                 JObject jsonObject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\ServerList.json", Encoding.UTF8));
-                jsonObject.Remove(serverid[serverList.SelectedIndex]);
+                _ = jsonObject.Remove(serverid[serverList.SelectedIndex]);
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\ServerList.json", Convert.ToString(jsonObject), Encoding.UTF8);
                 Growl.Success("删除服务器成功！");
                 GetServerConfig();
@@ -269,7 +264,7 @@ namespace MSL.pages
             catch
             {
                 Growl.Error("删除服务器失败！");
-                DialogShow.ShowMsg(mainwindow, "服务器删除失败！", "警告", false, "确定");
+                _ = DialogShow.ShowMsg(mainwindow, "服务器删除失败！", "警告", false, "确定");
                 GetServerConfig();
             }
         }
@@ -284,9 +279,9 @@ namespace MSL.pages
                 process.StartInfo.FileName = "cmd.exe";
                 process.StartInfo.Arguments = "/K " + "@ \"" + _json["java"] + "\" " + _json["memory"] + " " + _json["args"] + " -jar \"" + _json["core"] + "\" nogui&pause&exit";
                 Directory.SetCurrentDirectory(_json["base"].ToString());
-                process.Start();
+                _ = process.Start();
             }
-            catch (Exception ex) { MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
+            catch (Exception ex) { _ = MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
         }
 
         private void openServerDir_Click(object sender, RoutedEventArgs e)
@@ -296,9 +291,9 @@ namespace MSL.pages
                 JObject jsonObject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\ServerList.json", Encoding.UTF8));
                 JObject _json = (JObject)jsonObject[serverid[serverList.SelectedIndex]];
                 Growl.Info("正在为您打开服务器文件夹……");
-                Process.Start(_json["base"].ToString());
+                _ = Process.Start(_json["base"].ToString());
             }
-            catch (Exception ex) { MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
+            catch (Exception ex) { _ = MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
         }
 
         private void setModorPlugin_Click(object sender, RoutedEventArgs e)
@@ -318,12 +313,12 @@ namespace MSL.pages
                 ControlSetPMTab = true;
                 runner.Show();
             }
-            catch (Exception ex) { MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
+            catch (Exception ex) { _ = MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
         }
 
         void AutoOpenServer()
         {
-            Dispatcher.Invoke(new Action(delegate
+            Dispatcher.Invoke(() =>
             {
                 try
                 {
@@ -336,24 +331,24 @@ namespace MSL.pages
                         serverid.Add(item.Key);
                         if (File.Exists(item.Value["base"].ToString() + "\\server-icon.png"))
                         {
-                            serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), item.Value["base"].ToString() + "\\server-icon.png", "未运行", Brushes.Green));
+                            _ = serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), item.Value["base"].ToString() + "\\server-icon.png", "未运行", Brushes.Green));
                             StateCheck();
                         }
                         else if (item.Value["core"].ToString().IndexOf("forge") + 1 != 0 || item.Value["core"].ToString() == "")
                         {
-                            serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), "/images/150px-Anvil.png", "未运行", Brushes.Green));
+                            _ = serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), "/images/150px-Anvil.png", "未运行", Brushes.Green));
                             StateCheck();
                         }
                         else
                         {
-                            serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), "/images/150px-Impulse_Command_Block.png", "未运行", Brushes.MediumSeaGreen));
+                            _ = serverList.Items.Add(new ServerInfo(item.Value["name"].ToString(), "/images/150px-Impulse_Command_Block.png", "未运行", Brushes.MediumSeaGreen));
                             StateCheck();
                         }
                     }
                 }
                 catch
                 {
-                    MessageBox.Show("err");
+                    _ = MessageBox.Show("err");
                 }
                 int i = 0;
                 foreach (string x in serverid)
@@ -379,8 +374,8 @@ namespace MSL.pages
                     };
                     runner.Show();
                 }
-                catch (Exception ex) { MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
-            }));
+                catch (Exception ex) { _ = MessageBox.Show("出现错误，请检查您是否选择了服务器！\n" + ex.Message); }
+            });
         }//the same of GetServerConfig and StartServerEvent
 
         private void serverList_SelectionChanged(object sender, SelectionChangedEventArgs e)
