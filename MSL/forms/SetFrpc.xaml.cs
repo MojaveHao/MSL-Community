@@ -1,13 +1,12 @@
 ﻿using HandyControl.Controls;
 using MSL.controls;
-using MSL.controls.OfAPI;
+using MSL.OfAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -23,10 +22,10 @@ namespace MSL
     /// </summary>
     public partial class SetFrpc : HandyControl.Controls.Window
     {
-        List<string> list1 = new List<string>();
-        List<string> list2 = new List<string>();
-        List<string> list3 = new List<string>();
-        List<string> list4 = new List<string>();
+        readonly List<string> list1 = new List<string>();
+        readonly List<string> list2 = new List<string>();
+        readonly List<string> list3 = new List<string>();
+        readonly List<string> list4 = new List<string>();
         public SetFrpc() { InitializeComponent(); }
         string pageHtml;
         public string frpchome = $@"{AppDomain.CurrentDomain.BaseDirectory}MSL\frpc.ini";
@@ -35,41 +34,41 @@ namespace MSL
         public string auth;
         public string token;
         public string proxy;
+        public string Password;
         public JArray jArray;
         public Dictionary<string, string> nodelist;
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                WebClient MyWebClient = new WebClient
-                {
-                    Credentials = CredentialCache.DefaultCredentials
-                };
-                byte[] p = await MyWebClient.DownloadDataTaskAsync(MainWindow.serverLink + "/msl/frp");
-                //if (Encoding.UTF8.GetString(p) == "0") frpProvider.Items.Remove(frpProvider.Items[1]);
-            }
-            catch { }
-            await Task.Run(() => GetFrpsInfo());
+            Task.Run(() => GetFrpsInfo());
         }
+
         void GetFrpsInfo(string path = "frplist", string url = "")
         {
+            /*
             Dispatcher.Invoke(() =>
             {
-                frpProvider.IsEnabled = false;
                 LoadingCircle loadingCircle = new LoadingCircle
                 {
                     VerticalAlignment = VerticalAlignment.Top,
                     HorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(120, 150, 0, 0)
                 };
-                _ = MainGrid.Children.Add(loadingCircle);
+                MainGrid.Children.Add(loadingCircle);
                 MainGrid.RegisterName("loadingBar", loadingCircle);
             });
+            */
 
             try
             {
-                if (url == "") pageHtml = Functions.Get(path);
-                else pageHtml = Functions.Get(path, url);
+                if (url == "")
+                {
+                    pageHtml = Functions.Get(path);
+                }
+                else
+                {
+                    pageHtml = Functions.Get(path, url);
+                }
                 if (pageHtml.IndexOf("\r\n") != -1)
                 {
                     while (pageHtml.IndexOf("#") != -1)
@@ -103,14 +102,20 @@ namespace MSL
                             {
                                 if (reply.Status == IPStatus.Success)
                                 {
-                                    // 节点在线,可以获取延迟等信息
+                                    // 节点在线，可以获取延迟等信息
                                     int roundTripTime = (int)reply.RoundtripTime;
-                                    _ = listNodes.Items.Add(a100 + "(延迟:" + roundTripTime + "ms)");
+                                    listNodes.Items.Add(a100 + "(延迟：" + roundTripTime + "ms)");
                                 }
-                                else _ = listNodes.Items.Add(a100 + "(已下线,检测失败)");
+                                else
+                                {
+                                    //listBox1.Items.Add(a100 + "(检测失败,可能被DDos或下线)");
+                                }
                             });
                         }
-                        catch { _ = listNodes.Items.Add(a100 + "(已下线,检测失败)"); }
+                        catch
+                        {
+                            //listBox1.Items.Add(a100 + "(检测失败,可能被DDos或下线)");
+                        }
 
                         string strtempa3 = "min_open_port=";
                         int IndexofA03 = pageHtml.IndexOf(strtempa3);
@@ -160,17 +165,20 @@ namespace MSL
                             {
                                 if (reply.Status == IPStatus.Success)
                                 {
-                                    // 节点在线,可以获取延迟等信息
+                                    // 节点在线，可以获取延迟等信息
                                     int roundTripTime = (int)reply.RoundtripTime;
-                                    _ = listNodes.Items.Add(a100 + "(延迟:" + roundTripTime + "ms)");
+                                    listNodes.Items.Add(a100 + "(延迟：" + roundTripTime + "ms)");
                                 }
                                 else
                                 {
-                                    _ = listNodes.Items.Add(a100 + "(已下线,检测失败)");
+                                    //listNodes.Items.Add(a100 + "(检测失败,可能被DDos或下线)");
                                 }
                             });
                         }
-                        catch { _ = listNodes.Items.Add(a100 + "(已下线,检测失败)"); }
+                        catch
+                        {
+                            //listBox1.Items.Add(a100 + "(检测失败,可能被DDos或下线)");
+                        }
 
                         string strtempa3 = "min_open_port=";
                         int IndexofA03 = pageHtml.IndexOf(strtempa3);
@@ -192,7 +200,7 @@ namespace MSL
             {
                 Dispatcher.Invoke(() =>
                 {
-                    _ = MessageBox.Show("连接服务器失败" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("连接服务器失败！" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 });
             }
             Dispatcher.Invoke(() =>
@@ -206,15 +214,15 @@ namespace MSL
                     if (match.Success)
                     {
                         textBoxQQ.Text = match.Groups[1].Value;
-                        textBox3.Password = match.Groups[2].Value;
+                        //textBox3.Password = match.Groups[2].Value;
                     }
                 }
-                frpProvider.IsEnabled = true;
                 LoadingCircle loadingCircle = MainGrid.FindName("loadingBar") as LoadingCircle;
                 MainGrid.Children.Remove(loadingCircle);
                 MainGrid.UnregisterName("loadingBar");
             });
         }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (listNodes.SelectedIndex == -1)
@@ -226,151 +234,164 @@ namespace MSL
             if (frpProvider.SelectedIndex == 0)
             {
                 #region 创建传统的Frpc配置文件
-                if (textBox3.Visibility == Visibility.Hidden)
+
+                if (listNodes.SelectedIndex != -1)
                 {
-                    try
+                    if (listNodes.SelectedValue.ToString().Contains("付费"))
                     {
-                        int a = listNodes.SelectedIndex;
-                        Random ran = new Random();
-                        int n = ran.Next(int.Parse(list3[a].ToString()), int.Parse(list4[a].ToString()));
-                        if (textBoxPort.Text == "" || textBoxQQ.Text == "")
+                        try
                         {
-                            _ = DialogShow.ShowMsg(this, "请确保内网端口和QQ号不为空", "错误");
-                            return;
-                        }
-                        //string frptype = "";
-                        string serverName = listNodes.Items[listNodes.SelectedIndex].ToString();
-                        string compressionArg = "";
-                        if (enableCompression.IsChecked == true) compressionArg = "use_compression = true\n";
-                        if (serverName.Contains("(")) serverName = serverName.Substring(0, serverName.IndexOf("("));
-                        if (frpcType.SelectedIndex == 0) frptype = "tcp";
-                        else if (frpcType.SelectedIndex == 1) frptype = "udp";
+                            bool input_passwd = DialogShow.ShowInput(this, "请输入密码", out string Password);
+                            if (input_passwd)
+                            {
+                                int a = listNodes.SelectedIndex;
+                                Random ran = new Random();
+                                int n = ran.Next(int.Parse(list3[a].ToString()), int.Parse(list4[a].ToString()));
+                                if (textBoxPort.Text == "" || textBoxQQ.Text == "")
+                                {
+                                    _ = DialogShow.ShowMsg(this, "请确保内网端口和QQ号不为空", "错误");
+                                    return;
+                                }
+                                //string frptype = "";
+                                string serverName = listNodes.Items[listNodes.SelectedIndex].ToString();
+                                string compressionArg = "";
+                                if (enableCompression.IsChecked == true) compressionArg = "use_compression = true\n";
+                                if (serverName.Contains("(")) serverName = serverName.Substring(0, serverName.IndexOf("("));
+                                if (frpcType.SelectedIndex == 0) frptype = "tcp";
+                                else if (frpcType.SelectedIndex == 1) frptype = "udp";
 
-                        string frpc = "#" + serverName + "\n[common]\n";
-                        frpc += "server_port = " + list2[a].ToString() + "\n";
-                        frpc += "server_addr = " + list1[a].ToString() + "\n";
-                        frpc += "user = " + textBoxQQ.Text + "\n";
-                        frpc += "token = \n";
-                        if (frpcType.SelectedIndex == 2)
-                        {
-                            string a100 = textBoxPort.Text.Substring(0, textBoxPort.Text.IndexOf("|"));
-                            string Ru2 = textBoxPort.Text.Substring(textBoxPort.Text.IndexOf("|"));
-                            string a200 = Ru2.Substring(Ru2.IndexOf("|") + 1);
-                            frpc += "\n[tcp]\n\ttype = tcp\n";
-                            frpc += "\tlocal_ip = 127.0.0.1\n";
-                            frpc += "\tlocal_port = " + a100 + "\n";
-                            frpc += "\tremote_port = " + n + "\n";
-                            frpc += compressionArg + "\n";
-                            frpc += "\n[udp]\n\ttype = udp\n";
-                            frpc += "\tlocal_ip = 127.0.0.1\n";
-                            frpc += "\tlocal_port = " + a200 + "\n";
-                            frpc += "\tremote_port = " + n + "\n";
-                            frpc += compressionArg;
-                        }
-                        else
-                        {
-                            frpc += "\n[" + frptype + "]\ntype = " + frptype + "\n";
-                            frpc += "local_ip = 127.0.0.1\n";
-                            frpc += "local_port = " + textBoxPort.Text + "\n";
-                            frpc += "remote_port = " + n + "\n";
-                            frpc += compressionArg;
-                        }
-                        using (FileStream fs = new FileStream(frpchome, FileMode.Create, FileAccess.Write))
-                        using (StreamWriter sw = new StreamWriter(fs)) sw.Write(frpc);
+                                string frpc = "#" + serverName + "\n[common]\n";
+                                frpc += "server_port = " + list2[a].ToString() + "\n";
+                                frpc += "server_addr = " + list1[a].ToString() + "\n";
+                                frpc += "user = " + textBoxQQ.Text + "\n";
+                                frpc += "token = \n";
+                                if (frpcType.SelectedIndex == 2)
+                                {
+                                    string a100 = textBoxPort.Text.Substring(0, textBoxPort.Text.IndexOf("|"));
+                                    string Ru2 = textBoxPort.Text.Substring(textBoxPort.Text.IndexOf("|"));
+                                    string a200 = Ru2.Substring(Ru2.IndexOf("|") + 1);
+                                    frpc += "\n[tcp]\n\ttype = tcp\n";
+                                    frpc += "\tlocal_ip = 127.0.0.1\n";
+                                    frpc += "\tlocal_port = " + a100 + "\n";
+                                    frpc += "\tremote_port = " + n + "\n";
+                                    frpc += compressionArg + "\n";
+                                    frpc += "\n[udp]\n\ttype = udp\n";
+                                    frpc += "\tlocal_ip = 127.0.0.1\n";
+                                    frpc += "\tlocal_port = " + a200 + "\n";
+                                    frpc += "\tremote_port = " + n + "\n";
+                                    frpc += compressionArg;
+                                }
+                                else
+                                {
+                                    frpc += "\n[" + frptype + "]\ntype = " + frptype + "\n";
+                                    frpc += "local_ip = 127.0.0.1\n";
+                                    frpc += "local_port = " + textBoxPort.Text + "\n";
+                                    frpc += "remote_port = " + n + "\n";
+                                    frpc += compressionArg;
+                                }
+                                using (FileStream fs = new FileStream(frpchome, FileMode.Create, FileAccess.Write))
+                                using (StreamWriter sw = new StreamWriter(fs)) sw.Write(frpc);
 
-                        _ = DialogShow.ShowMsg(this, "Frpc配置已保存", "信息", false, "确定");
-                        Close();
-                    }
-                    catch (Exception a) { _ = MessageBox.Show(a.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
-                }
-                else
-                {
-                    try
+                                _ = DialogShow.ShowMsg(this, "Frpc配置已保存", "信息", false, "确定");
+                                Close();
+                            }
+                            else
+                            {
+                                _ = DialogShow.ShowMsg(this, "请输入密码", "错误");
+                            }
+                        }
+                        catch (Exception a) { _ = MessageBox.Show(a.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
+                    } // 付费节点
+
+                    else
                     {
-                        int a = listNodes.SelectedIndex;
-                        Random ran = new Random();
-                        int n = ran.Next(int.Parse(list3[a].ToString()), int.Parse(list4[a].ToString()));
-                        if (textBoxPort.Text == "" || textBoxQQ.Text == "" || textBox3.Password == "")
+                        try
                         {
-                            _ = DialogShow.ShowMsg(this, "请确保没有漏填信息", "错误");
-                            return;
-                        }
-                        //string frptype = "";
-                        string protocol = "";
-                        string frpPort = (int.Parse(list2[a].ToString())).ToString();
+                            int a = listNodes.SelectedIndex;
+                            Random ran = new Random();
+                            int n = ran.Next(int.Parse(list3[a].ToString()), int.Parse(list4[a].ToString()));
+                            if (textBoxPort.Text == "" || textBoxQQ.Text == "")
+                            {
+                                _ = DialogShow.ShowMsg(this, "请确保没有漏填信息", "错误");
+                                return;
+                            }
+                            //string frptype = "";
+                            string protocol = "";
+                            string frpPort = (int.Parse(list2[a].ToString())).ToString();
 
-                        switch (frpcType.SelectedIndex)
+                            switch (frpcType.SelectedIndex)
+                            {
+                                case 0:
+                                    frptype = "tcp";
+                                    break;
+
+                                case 1:
+                                    frptype = "udp";
+                                    break;
+                            }
+
+                            switch (usePaidProtocol.SelectedIndex)
+                            {
+                                case 0:
+                                    protocol = "quic";
+                                    frpPort = (int.Parse(list2[a].ToString()) + 1).ToString();
+                                    break;
+
+                                case 1:
+                                    protocol = "kcp";
+                                    break;
+                            }
+
+                            string serverName = listNodes.Items[listNodes.SelectedIndex].ToString();
+                            string compressionArg = "";
+                            if (enableCompression.IsChecked == true) compressionArg = "use_compression = true\n";
+                            if (serverName.Contains("(")) serverName = serverName.Substring(0, serverName.IndexOf("("));
+                            string frpc = "#" + serverName + "\n[common]\n";
+                            frpc += "server_port = " + frpPort + "\n";
+                            frpc += "server_addr = " + list1[a].ToString() + "\n";
+                            frpc += "user = " + textBoxQQ.Text + "\n";
+                            frpc += "meta_token = " + Password + "\n";
+                            if (protocol != "") frpc += "protocol = " + protocol + "\n";
+
+                            if (frpcType.SelectedIndex == 2)
+                            {
+                                string a100 = textBoxPort.Text.Substring(0, textBoxPort.Text.IndexOf("|"));
+                                string Ru2 = textBoxPort.Text.Substring(textBoxPort.Text.IndexOf("|"));
+                                string a200 = Ru2.Substring(Ru2.IndexOf("|") + 1);
+                                frpc += "\n[tcp]\ntype = tcp\n";
+                                frpc += "local_ip = 127.0.0.1\n";
+                                frpc += "local_port = " + a100 + "\n";
+                                frpc += "remote_port = " + n + "\n";
+                                frpc += compressionArg + "\n";
+                                frpc += "\n[udp]\ntype = udp\n";
+                                frpc += "local_ip = 127.0.0.1\n";
+                                frpc += "local_port = " + a200 + "\n";
+                                frpc += "remote_port = " + n + "\n";
+                                frpc += compressionArg;
+                            }
+                            else
+                            {
+                                frpc += "\n[" + frptype + "]\ntype = " + frptype + "\n";
+                                frpc += "local_ip = 127.0.0.1\n";
+                                frpc += "local_port = " + textBoxPort.Text + "\n";
+                                frpc += "remote_port = " + n + "\n";
+                                frpc += compressionArg;
+                            }
+
+                            File.WriteAllText(frpchome, frpc);
+
+                            _ = DialogShow.ShowMsg(this, "映射配置成功", "信息", false, "确定");
+                            Close();
+                        }
+                        catch (Exception a)
                         {
-                            case 0:
-                                frptype = "tcp";
-                                break;
-
-                            case 1:
-                                frptype = "udp";
-                                break;
+                            _ = MessageBox.Show("请确保选择了节点" + a, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
-
-                        switch (usePaidProtocol.SelectedIndex)
-                        {
-                            case 0:
-                                protocol = "quic";
-                                frpPort = (int.Parse(list2[a].ToString()) + 1).ToString();
-                                break;
-
-                            case 1:
-                                protocol = "kcp";
-                                break;
-                        }
-
-                        string serverName = listNodes.Items[listNodes.SelectedIndex].ToString();
-                        string compressionArg = "";
-                        if (enableCompression.IsChecked == true) compressionArg = "use_compression = true\n";
-                        if (serverName.Contains("(")) serverName = serverName.Substring(0, serverName.IndexOf("("));
-                        string frpc = "#" + serverName + "\n[common]\n";
-                        frpc += "server_port = " + frpPort + "\n";
-                        frpc += "server_addr = " + list1[a].ToString() + "\n";
-                        frpc += "user = " + textBoxQQ.Text + "\n";
-                        frpc += "meta_token = " + textBox3.Password + "\n";
-                        if (protocol != "") frpc += "protocol = " + protocol + "\n";
-
-                        if (frpcType.SelectedIndex == 2)
-                        {
-                            string a100 = textBoxPort.Text.Substring(0, textBoxPort.Text.IndexOf("|"));
-                            string Ru2 = textBoxPort.Text.Substring(textBoxPort.Text.IndexOf("|"));
-                            string a200 = Ru2.Substring(Ru2.IndexOf("|") + 1);
-                            frpc += "\n[tcp]\ntype = tcp\n";
-                            frpc += "local_ip = 127.0.0.1\n";
-                            frpc += "local_port = " + a100 + "\n";
-                            frpc += "remote_port = " + n + "\n";
-                            frpc += compressionArg + "\n";
-                            frpc += "\n[udp]\ntype = udp\n";
-                            frpc += "local_ip = 127.0.0.1\n";
-                            frpc += "local_port = " + a200 + "\n";
-                            frpc += "remote_port = " + n + "\n";
-                            frpc += compressionArg;
-                        }
-                        else
-                        {
-                            frpc += "\n[" + frptype + "]\ntype = " + frptype + "\n";
-                            frpc += "local_ip = 127.0.0.1\n";
-                            frpc += "local_port = " + textBoxPort.Text + "\n";
-                            frpc += "remote_port = " + n + "\n";
-                            frpc += compressionArg;
-                        }
-
-                        File.WriteAllText(frpchome, frpc);
-
-                        _ = DialogShow.ShowMsg(this, "映射配置成功", "信息", false, "确定");
-                        Close();
-                    }
-                    catch (Exception a)
-                    {
-                        _ = MessageBox.Show("请确保选择了节点" + a, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    } //免费节点
                 }
                 #endregion
             }
-            else
+            else if (frpProvider.SelectedIndex == 1)
             {
                 #region 写入OpenFrp的配置信息
                 if (textBoxPort.Text == "")
@@ -397,10 +418,17 @@ namespace MSL
                 (LoginMessage, string) proxy_name = control.CreateProxy(id, auth, type, port, zip, selected_node_id, jArray, this);
                 try
                 {
-                    if (proxy_name.Item1.flag)
+                    if (proxy_name.Item1 != null)
                     {
-                        var proxy = control.GetUserNodeId(id, auth, proxy_name.Item2, this);
-                        File.WriteAllText(frpchome, $"-u {token} -p {proxy}");
+                        if (proxy_name.Item1.flag)
+                        {
+                            string proxy = control.GetUserNodeId(id, auth, proxy_name.Item2, this);
+                            File.WriteAllText(frpchome, $"-u {token} -p {proxy}");
+                        }
+                        else
+                        {
+                            _ = DialogShow.ShowMsg(this, "创建隧道失败\n" + proxy_name.Item1.msg, "失败");
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -412,7 +440,7 @@ namespace MSL
             }
         }
 
-        private void listBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (listNodes.SelectedIndex != -1)
             {
@@ -420,74 +448,69 @@ namespace MSL
                 {
                     if (listNodes.SelectedItem.ToString().IndexOf("无加速协议") + 1 != 0)
                     {
-                        paidProtocolLabel.Visibility = Visibility.Hidden;
                         usePaidProtocol.Visibility = Visibility.Hidden;
                     }
                     else
                     {
-                        paidProtocolLabel.Visibility = Visibility.Visible;
                         usePaidProtocol.Visibility = Visibility.Visible;
                     }
-                    paidProtocolLabel.Visibility = Visibility.Visible;
                     usePaidProtocol.Visibility = Visibility.Visible;
-                    paidPasswordLabel.Visibility = Visibility.Visible;
-                    textBox3.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    paidProtocolLabel.Visibility = Visibility.Hidden;
                     usePaidProtocol.Visibility = Visibility.Hidden;
-                    paidPasswordLabel.Visibility = Visibility.Hidden;
-                    textBox3.Visibility = Visibility.Hidden;
                 }
             }
         }
-        private void frpcType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void FrpcType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (frpcType.SelectedIndex == 0) textBoxPort.Text = "25565";
             if (frpcType.SelectedIndex == 1) textBoxPort.Text = "19132";
             if (frpcType.SelectedIndex == 2) textBoxPort.Text = "25565|19132";
         }
 
-        private async void gotoWeb_Click(object sender, RoutedEventArgs e)
+        private async void GotoWeb_Click(object sender, RoutedEventArgs e)
         {
-            if (frpProvider.SelectedIndex == 0)
+            DialogShow.ShowMsg(this, "点击确定后，开服器会弹出一个输入框，同时为您打开爱发电网站，您需要在爱发电购买的时候备注自己的QQ号（纯数字，不要夹带其他内容），购买完毕后，返回开服器，将您的QQ号输入进弹出的输入框中，开服器会自动为您获取密码。\n（注：付费密码在购买后会在服务器保存30分钟，请及时返回开服器进行操作，如果超时，请自行添加QQ：483232994来手动获取）", "购买须知");
+            Process.Start("https://afdian.net/a/makabaka123");
+            bool input = DialogShow.ShowInput(this, "输入您在爱发电备注的QQ号：", out string text);
+            if (input)
             {
-                _ = DialogShow.ShowMsg(this, "点击确定后,开服器会弹出一个输入框,同时为您打开爱发电网站,您需要在爱发电购买的时候备注自己的QQ号（纯数字,不要夹带其他内容）,购买完毕后,返回开服器,将您的QQ号输入进弹出的输入框中,开服器会自动为您获取密码。\n（注：付费密码在购买后会在服务器保存30分钟,请及时返回开服器进行操作,如果超时,请自行添加QQ：483232994来手动获取）", "购买须知");
-                _ = Process.Start("https://afdian.net/a/makabaka123");
-                bool input = DialogShow.ShowInput(this, "输入备注的QQ号", out string text);
-                if (input)
+                Dialog _dialog = null;
+                try
                 {
-                    Dialog _dialog = null;
-                    try
+                    _dialog = Dialog.Show(new TextDialog("获取密码中，请稍等……"));
+                    JObject patientinfo = new JObject
                     {
-                        _dialog = Dialog.Show(new TextDialog("获取密码中"));
-                        JObject patientinfo = new JObject
+                        ["qq"] = text
+                    };
+                    string sendData = JsonConvert.SerializeObject(patientinfo);
+                    string ret = await Task.Run(() => Functions.Post("getpassword", 0, sendData, "http://111.180.189.249:6000"));
+                    this.Focus();
+                    _dialog.Close();
+                    if (ret != "Err")
+                    {
+                        bool dialog = DialogShow.ShowMsg(this, "您的付费密码为：" + ret + " 请牢记！", "获取成功！", true, "确定", "复制&确定");
+                        if (dialog)
                         {
-                            ["qq"] = text
-                        };
-                        string sendData = JsonConvert.SerializeObject(patientinfo);
-                        string ret = await Task.Run(() => Functions.Post("getpassword", 0, sendData, "https://aifadian.waheal.top"));
-                        _ = Focus();
-                        _dialog.Close();
-                        if (ret != "Err")
-                        {
-                            bool dialog = DialogShow.ShowMsg(this, "密码是" + ret + " 请妥善保存", "获取成功", true, "确定", "复制&确定");
-                            if (dialog) Clipboard.SetDataObject(ret);
+                            Clipboard.SetDataObject(ret);
                         }
-                        else _ = DialogShow.ShowMsg(this, "您的密码可能长时间未被获取,已经超时", "获取失败");
                     }
-                    catch
+                    else
                     {
-                        _ = Focus();
-                        _dialog.Close();
-                        _ = DialogShow.ShowMsg(this, "获取失败", "获取失败");
+                        DialogShow.ShowMsg(this, "您的密码可能长时间无人获取，已经超时！请添加QQ：483232994（昵称：MSL-FRP），并发送赞助图片来手动获取密码\r\n（注：回复消息不一定及时，请耐心等待！如果没有添加成功，或者添加后长时间无人回复，请进入MSL交流群然后从群里私聊）", "获取失败！");
                     }
+                }
+                catch
+                {
+                    this.Focus();
+                    _dialog.Close();
+                    DialogShow.ShowMsg(this, "获取失败，请添加QQ：483232994（昵称：MSL-FRP），并发送赞助图片来手动获取密码\r\n（注：回复消息不一定及时，请耐心等待！如果没有添加成功，或者添加后长时间无人回复，请进入MSL交流群然后从群里私聊）", "获取失败！");
                 }
             }
         }
 
-        void frpProvider_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        void FrpProvider_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (IsLoaded)
             {
@@ -503,15 +526,10 @@ namespace MSL
                     list4.Clear();
                     _ = Task.Run(() => GetFrpsInfo());
                 }
-                else if (frpProvider.SelectedIndex == 1) //OpenFrp的登陆处理
+                else if (frpProvider.SelectedIndex == 1) //OpenFrp(新建隧道)
                 {
                     usePaidProtocol.SelectedIndex = 2;
                     usePaidProtocol.IsEnabled = false;
-                    listNodes.Items.Clear();
-                    list1.Clear();
-                    list2.Clear();
-                    list3.Clear();
-                    list4.Clear();
                     bool input_account = DialogShow.ShowInput(this, "OpenFrp的账户名/邮箱", out string account);
                     if (input_account)
                     {
@@ -521,15 +539,21 @@ namespace MSL
                             APIControl control = new APIControl();
                             (UserwithSessionID, string) login = control.Login(account, password, this);
                             UserwithSessionID userwithSessionID = login.Item1;
-                            token = login.Item2;
-                            auth = userwithSessionID.auth;
-                            id = userwithSessionID.session;
+                            token = login.Item2;                            
                             if (userwithSessionID != null)
                             {
-                                var process = control.GetNodeList(userwithSessionID.session, userwithSessionID.auth, this);
-                                nodelist = process.Item1;
+                                auth = userwithSessionID.auth;
+                                id = userwithSessionID.session;
+                                (Dictionary<string, string>, JArray) process = control.GetNodeList(id, auth, this);
+                                Dictionary<string, string> item1 = process.Item1;
+                                nodelist = item1;
                                 jArray = process.Item2;
-                                foreach (var node in nodelist)
+                                listNodes.Items.Clear();
+                                list1.Clear();
+                                list2.Clear();
+                                list3.Clear();
+                                list4.Clear();
+                                foreach (var node in item1)
                                 {
                                     _ = listNodes.Items.Add(node.Key);
                                 }
@@ -547,7 +571,60 @@ namespace MSL
                         frpProvider.SelectedIndex = 0;
                     }
                 }
-                else if (frpProvider.SelectedIndex == 2)
+
+                else if (frpProvider.SelectedIndex == 2)//OpenFrp(使用现有)
+                {
+                    usePaidProtocol.SelectedIndex = 2;
+                    usePaidProtocol.IsEnabled = false;
+                    bool input_account = DialogShow.ShowInput(this, "OpenFrp的账户名/邮箱", out string account);
+                    if (input_account)
+                    {
+                        bool input_paswd = DialogShow.ShowInput(this, account + "的密码", out string password);
+                        if (input_paswd)
+                        {
+                            APIControl control = new APIControl();
+                            (UserwithSessionID, string) login = control.Login(account, password, this);
+                            UserwithSessionID userwithSessionID = login.Item1;
+                            token = login.Item2;                            
+                            if (userwithSessionID != null)
+                            {
+                                auth = userwithSessionID.auth;
+                                id = userwithSessionID.session;
+                                Dictionary<string, string>process = control.GetUserNodes(id, auth, this);
+                                listNodes.Items.Clear();
+                                list1.Clear();
+                                list2.Clear();
+                                list3.Clear();
+                                list4.Clear();
+                                if (process.Count != 0)
+                                {
+                                    foreach (KeyValuePair<string, string> node in process)
+                                    {
+                                        _ = listNodes.Items.Add(node.Key);
+                                    }
+                                }
+                                else
+                                {
+                                    DialogShow.ShowMsg(this, "你的账户看起来一条隧道也没有", "错误");
+                                    frpProvider.SelectedIndex = 0;
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _ = DialogShow.ShowMsg(this, "请确保输入了密码", "登录失败");
+                            frpProvider.SelectedIndex = 0;
+                        }
+                    }
+                    else
+                    {
+                        _ = DialogShow.ShowMsg(this, "请确保输入了账户", "登录失败");
+                        frpProvider.SelectedIndex = 0;
+                    }
+                }
+
+                else if (frpProvider.SelectedIndex == 3)//OpenFrp(手动输入)
                 {
                     bool input_account = DialogShow.ShowInput(this, "账户Token", out string account_token);
                     if (input_account)

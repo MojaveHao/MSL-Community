@@ -6,13 +6,13 @@ namespace MSL.controls
     /// <summary>
     /// MessageDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class MessageDialog : Window
+    public partial class MessageDialog : HandyControl.Controls.Window
     {
         public static bool _dialogReturn;
         public MessageDialog(Window window, string dialogText, string dialogTitle, bool primaryBtnVisible, string closeText, string primaryText)
         {
             InitializeComponent();
-            this.MaxHeight = window.ActualHeight - 50;
+            this.MaxHeight = window.ActualHeight;
             this.MaxWidth = window.ActualWidth - 200;
             _dialogReturn = false;
             titleText.Text = dialogTitle;
@@ -27,30 +27,14 @@ namespace MSL.controls
 
         private void primaryBtn_Click(object sender, RoutedEventArgs e)
         {
-            var story = (Storyboard)this.Resources["HideWindow"];
-            if (story != null)
-            {
-                story.Completed += delegate
-                {
-                    _dialogReturn = true;
-                    Close();
-                };
-                story.Begin(this);
-            }
+            _dialogReturn = true;
+            Close();
         }
 
         private void closeBtn_Click(object sender, RoutedEventArgs e)
         {
-            var story = (Storyboard)this.Resources["HideWindow"];
-            if (story != null)
-            {
-                story.Completed += delegate
-                {
-                    _dialogReturn = false;
-                    Close();
-                };
-                story.Begin(this);
-            }
+            _dialogReturn = false;
+            Close();
         }
     }
 }

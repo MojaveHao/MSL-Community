@@ -15,27 +15,25 @@
             <ColumnDefinition Width="86*"/>
         </Grid.ColumnDefinitions>
         <Label Content="提供商列表" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" FontWeight="Bold" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Height="40"/>
-        <ComboBox x:Name="frpProvider" Margin="410,5,0,0" SelectedIndex="0" SelectionChanged="frpProvider_SelectionChanged" VerticalAlignment="Top" Height="30" HorizontalAlignment="Left" Width="314" Grid.ColumnSpan="2">
+        <ComboBox x:Name="frpProvider" Margin="410,5,0,0" SelectedIndex="0" SelectionChanged="FrpProvider_SelectionChanged" VerticalAlignment="Top" Height="30" HorizontalAlignment="Left" Width="314" Grid.ColumnSpan="2">
             <ComboBoxItem Content="MSL-Frp"/>
             <ComboBoxItem Content="OpenFrp(实验性支持)"/>
+            <ComboBoxItem Content="OpenFrp(使用现有隧道)"/>
             <ComboBoxItem Content="OpenFrp(手动输入隧道ID和token)"/>
         </ComboBox>
-        <ListBox x:Name="listNodes" Height="320" Width="594" SelectionChanged="listBox1_SelectionChanged" SelectionMode="Single" Margin="20,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <ListBox x:Name="listNodes" Height="320" Width="594" SelectionChanged="ListBox1_SelectionChanged" SelectionMode="Single" Margin="20,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
         <Button Content="确定" Margin="52,284,0,0" Style="{StaticResource ButtonPrimary}" VerticalAlignment="Top" Width="100" Click="Button_Click" FontWeight="Normal" FontSize="18" Height="51" HorizontalAlignment="Left" Grid.Column="1"/>
         <TextBox x:Name="textBoxPort" HorizontalAlignment="Left" Height="23" Margin="52,85,0,0" VerticalAlignment="Top" Width="100" Text="25565" Grid.Column="1"/>
         <TextBox x:Name="textBoxQQ" HorizontalAlignment="Left" Height="23" Margin="52,146,0,0" VerticalAlignment="Top" Width="100" Grid.Column="1"/>
         <Label x:Name="lab1" Content="本地端口" HorizontalAlignment="Left" Margin="52,52,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="14" Grid.Column="1"/>
         <Label x:Name="lab2" Content="QQ" HorizontalAlignment="Left" Margin="52,118,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Background="{x:Null}" FontSize="14" Grid.Column="1"/>
-        <Label Content="节点列表" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="10,40,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Height="40" Padding="10,0,10,5"/>
-        <hc:PasswordBox x:Name="textBox3" HorizontalAlignment="Left" Height="23" Margin="330,185,0,0" VerticalAlignment="Top" Width="400" ShowEyeButton="True" Visibility="Hidden" Grid.ColumnSpan="2"/>
-        <Label x:Name="paidPasswordLabel" Content="付费节点密码" HorizontalAlignment="Left" Margin="290,155,0,0" FontSize="14" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Visibility="Hidden"/>
-        <Button x:Name="gotoAifadian" Content="购买付费节点" Margin="52,340,0,0" VerticalAlignment="Top" Click="gotoWeb_Click" HorizontalAlignment="Left" Width="100" Height="60" Grid.Column="1"/>
-        <ComboBox x:Name="frpcType" HorizontalAlignment="Left" Margin="52,185,0,0" VerticalAlignment="Top" Width="100" SelectionChanged="frpcType_SelectionChanged" Grid.Column="1">
+        <Label Content="节点列表" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="10,40,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Height="40" Padding="10,0,10,5" FontWeight="Bold"/>
+        <Button x:Name="gotoAifadian" Content="购买付费节点" Margin="52,340,0,0" VerticalAlignment="Top" Click="GotoWeb_Click" HorizontalAlignment="Left" Width="100" Height="60" Grid.Column="1"/>
+        <ComboBox x:Name="frpcType" HorizontalAlignment="Left" Margin="52,185,0,0" VerticalAlignment="Top" Width="100" SelectionChanged="FrpcType_SelectionChanged" Grid.Column="1">
             <ComboBoxItem IsSelected="True" Content="TCP"/>
             <ComboBoxItem Content="UDP"/>
             <ComboBoxItem Content="TCP和UDP"/>
         </ComboBox>
-        <Label x:Name="paidProtocolLabel" Content="付费节点协议" HorizontalAlignment="Left" Margin="290,270,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Background="{x:Null}" Width="138" FontSize="14" Visibility="Hidden"/>
         <ComboBox x:Name="usePaidProtocol" HorizontalAlignment="Left" Margin="52,226,0,0" VerticalAlignment="Top" Width="100" Grid.Column="1">
             <ComboBoxItem IsSelected="True" Content="Quic"/>
             <ComboBoxItem Content="KCP"/>

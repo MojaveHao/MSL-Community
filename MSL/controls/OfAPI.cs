@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using MSL.controls;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Windows;
 
-namespace MSL.controls.OfAPI
+namespace MSL.OfAPI
 {
     class baseReturn
     {
@@ -123,7 +123,7 @@ namespace MSL.controls.OfAPI
 
     class APIControl
     {
-        public string GetUserNodeId(string id, string auth, string name, Window window)
+        public Dictionary<string, string> GetUserNodes(string id, string auth, System.Windows.Window window)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getUserProxies");
             request.Method = "POST";
@@ -147,13 +147,77 @@ namespace MSL.controls.OfAPI
                 string responseMessage = reader.ReadToEnd();
                 Dictionary<string, string> Nodes = new Dictionary<string, string>();
                 JObject jo = (JObject)JsonConvert.DeserializeObject(responseMessage);
-                var jArray = JArray.Parse(jo["data"]["list"].ToString());
-                foreach (var node in jArray)
+                JArray jArray = JArray.Parse(jo["data"]["list"].ToString());
+                foreach (JToken node in jArray)
                 {
-                    if (node["name"].ToString() == name)
+                    if (Convert.ToBoolean(node["online"]) && Convert.ToBoolean(node["status"]))
                     {
-                        return node["id"].ToString();
+                        Nodes.Add(node["name"].ToString(), node["id"].ToString());
+                        DialogShow.ShowMsg(window, node["name"].ToString(), node["id"].ToString());
                     }
+                }
+                return Nodes;
+            }
+            catch (WebException ex)
+            {
+                if (ex.Response != null)
+                {
+                    using (var errorResponse = (HttpWebResponse)ex.Response)
+                    {
+                        using (var reader = new StreamReader(errorResponse.GetResponseStream()))
+                        {
+                            string error = reader.ReadToEnd();
+                            _ = DialogShow.ShowMsg(window, error, "获取用户信息失败");
+                        }
+                    }
+                }
+                return null;
+            }
+        }
+
+        public string GetUserNodeId(string id, string auth, string name, System.Windows.Window window)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getUserProxies");
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers.Add("Authorization", auth);
+            SessionID userinfo = new SessionID
+            {
+                session = id
+            };
+            string json = JsonConvert.SerializeObject(userinfo);//转换json格式
+            byte[] byteArray = Encoding.UTF8.GetBytes(json);
+            request.ContentLength = byteArray.Length;
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                dataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream);
+                string responseMessage = reader.ReadToEnd();
+                Dictionary<string, string> Nodes = new Dictionary<string, string>();
+                /*
+                JObject jo = (JObject)JsonConvert.DeserializeObject(responseMessage);
+                JObject jod = (JObject)JsonConvert.DeserializeObject(jo["data"].ToString());
+                DialogShow.ShowMsg(window, jo["data"].ToString(), "debug");
+                JArray jArray = (JArray)JsonConvert.DeserializeObject(jod["list"].ToString());
+                DialogShow.ShowMsg(window, jod["list"].ToString(), "debug");
+                */
+                JObject jo = (JObject)JsonConvert.DeserializeObject(responseMessage);
+                //_ = DialogShow.ShowMsg(window, jo["data"]["list"].ToString(), "debug");
+                JArray jArray = JArray.Parse(jo["data"]["list"].ToString());
+                foreach (JToken node in jArray)
+                {
+                    if (node["proxyName"] != null)
+                    {
+                        if (node["proxyName"].ToString() == name)
+                        {
+                            return node["id"].ToString();
+                        }
+                    }
+                    //else _ = DialogShow.ShowMsg(window, "node[proxyName] = null", "debug");
                 }
                 reader.Close();
                 dataStream.Close();
@@ -177,8 +241,7 @@ namespace MSL.controls.OfAPI
             }
         }
 
-
-        public (Dictionary<string, string>, JArray) GetNodeList(string id, string auth, Window window)
+        public (Dictionary<string, string>, JArray) GetNodeList(string id, string auth, System.Windows.Window window)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getNodeList");
             request.Method = "POST";
@@ -208,7 +271,16 @@ namespace MSL.controls.OfAPI
                     if (node["port"].ToString() != "您无权查询此节点的地址" && Convert.ToInt16(node["status"]) == 200 && !Convert.ToBoolean(node["fullyLoaded"]))
                     {
                         string[] targetGroup = node["group"].ToString().Split(';');
-                        string nodename = $"[{node["comments"]}]{node["name"]}";
+                        string nodename = "";
+                        if (node["comments"].ToString() == "")
+                        {
+                            nodename = $"{node["name"]}";
+                            
+                        }
+                        else
+                        {
+                            nodename = $"[{node["comments"]}]{node["name"]}";
+                        }                        
                         Nodes.Add(nodename, node["id"].ToString());
                     }
                 }
@@ -234,7 +306,41 @@ namespace MSL.controls.OfAPI
             }
         }
 
-        public UserData GetUserInfo(string id, string auth, Window window)
+        public void UserSign(string id, string auth, System.Windows.Window window)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/userSign");
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers.Add("Authorization", auth);
+            SessionID userinfo = new SessionID
+            {
+                session = id
+            };
+            string json = JsonConvert.SerializeObject(userinfo);//转换json格式用于登录API
+            byte[] byteArray = Encoding.UTF8.GetBytes(json);
+            request.ContentLength = byteArray.Length;
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                dataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream);
+                string responseMessage = reader.ReadToEnd();
+                if (JsonConvert.DeserializeObject<LoginMessage>(responseMessage) != null && JsonConvert.DeserializeObject<LoginMessage>(responseMessage).flag)
+                {
+                    _ = DialogShow.ShowMsg(window, JsonConvert.DeserializeObject<LoginMessage>(responseMessage).data, "签到成功");
+                }
+                else
+                {
+                    _ = DialogShow.ShowMsg(window, "签到失败", "签到失败");
+                }
+            }
+            catch (Exception ex) { _ = DialogShow.ShowMsg(window, "签到失败,产生的错误:\n" + ex.Message, "签到失败"); }
+        }
+
+        public UserData GetUserInfo(string id, string auth, System.Windows.Window window)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getUserInfo");
             request.Method = "POST";
@@ -266,7 +372,11 @@ namespace MSL.controls.OfAPI
                 string email = $"邮箱:{userdata.email}\n";
                 string traffic = $"剩余流量:{userdata.traffic}Mib";
                 string showusrinfo = welcome + traffic + limit + group + userid + email + used;
-                _ = DialogShow.ShowMsg(window, showusrinfo, "用户信息");
+                bool login = DialogShow.ShowMsg(window, showusrinfo, "用户信息", true, "确定", "点击签到");
+                if (login)
+                {
+                    UserSign(id, auth, window);
+                }
                 reader.Close();
                 dataStream.Close();
                 response.Close();
@@ -289,7 +399,7 @@ namespace MSL.controls.OfAPI
             }
         }
 
-        public (UserwithSessionID, string) Login(string account, string password, Window window)
+        public (UserwithSessionID, string) Login(string account, string password, System.Windows.Window window)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/user/login");
             request.Method = "POST";
@@ -350,7 +460,7 @@ namespace MSL.controls.OfAPI
             }
         }
 
-        public (LoginMessage, string) CreateProxy(string id, string auth, string type, string port, bool EnableZip, int nodeid, JArray jArray, Window window)
+        public (LoginMessage, string) CreateProxy(string id, string auth, string type, string port, bool EnableZip, int nodeid, JArray jArray, System.Windows.Window window)
         {
             #region 获取节点端口限制
             (int, int) remote_port_limit = (10000, 99999);
@@ -414,13 +524,13 @@ namespace MSL.controls.OfAPI
                     if (deserializedMessage.flag == true)
                     {
                         _ = DialogShow.ShowMsg(window, "创建隧道成功\n", "创建成功");
+                        return (deserializedMessage, proxy_name);
                     }
                     else
                     {
                         _ = DialogShow.ShowMsg(window, "创建隧道失败\n" + responseMessage, "创建失败");
                         return (null, null);
                     }
-                    return (deserializedMessage, proxy_name);
                 }
                 catch (WebException ex)
                 {
@@ -432,7 +542,6 @@ namespace MSL.controls.OfAPI
                             {
                                 string error = reader.ReadToEnd();
                                 _ = DialogShow.ShowMsg(window, error, "创建隧道失败");
-                                return (null, null);
                             }
                         }
                     }

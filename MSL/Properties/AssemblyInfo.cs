@@ -8,7 +8,7 @@ using System.Windows;
 [assembly: AssemblyTitle("Minecraft Server Launcher Community")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("MSLCommunity Develop Group")]
 [assembly: AssemblyProduct("Minecraft Server Launcher Community")]
 [assembly: AssemblyCopyright("Copyleft 🄯 MSLCommunity Develop Group 2023")]
 [assembly: AssemblyTrademark("")]
@@ -49,5 +49,5 @@ using System.Windows;
 //可以指定所有这些值，也可以使用“生成号”和“修订号”的默认值
 //通过使用 "*"，如下所示:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.5.1.1")]
-[assembly: AssemblyFileVersion("3.5.1.1")]
+[assembly: AssemblyVersion("3.5.1.5")]
+[assembly: AssemblyFileVersion("3.5.1.5")]

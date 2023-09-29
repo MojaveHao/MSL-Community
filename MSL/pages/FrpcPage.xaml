@@ -18,11 +18,10 @@
     </Page.Triggers>
     <Border Style="{StaticResource MagicBorder}" VerticalAlignment="Stretch" Margin="10,10,10,10">
         <Grid>
-            <Label Content="Frpc配置" Style="{StaticResource BorderTitle}" Margin="10,10,0,0"/>
-            <TextBlock x:Name="currentStat" Text="未检测到内网映射配置" Margin="10,40,0,0" VerticalAlignment="Top" FontSize="16" Foreground="Red" HorizontalAlignment="Left"/>
-            <Button x:Name="setfrpc" Content="配置" HorizontalAlignment="Right" Margin="0,0,12,90" VerticalAlignment="Bottom" Width="143" Height="64" FontSize="20" Click="setfrpc_Click"/>
-            <Button x:Name="startfrpc" Content="启动内网映射" Style="{StaticResource ButtonPrimary}" HorizontalAlignment="Right" Margin="0,0,12,12" Width="143" Height="62" FontSize="16" IsEnabled="False" Click="startfrpc_Click" VerticalAlignment="Bottom"/>
-            <TextBox x:Name="frpcOutlog" ContextMenu="{DynamicResource UIContextMenu}" Margin="10,0,167,12" TextWrapping="Wrap" Text="日志" IsReadOnly="True" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" Padding="10" Height="298" VerticalAlignment="Bottom"/>
+            <Label Content="Frpc" Style="{StaticResource BorderTitle}" Margin="10,10,0,0"/>
+            <Button x:Name="setfrpc" Content="配置" HorizontalAlignment="Right" Margin="0,0,12,90" VerticalAlignment="Bottom" Width="143" Height="64" FontSize="20" Click="Setfrpc_Click"/>
+            <Button x:Name="startfrpc" Content="启动Frpc" Style="{StaticResource ButtonPrimary}" HorizontalAlignment="Right" Margin="0,0,12,12" Width="143" Height="62" FontSize="16" Click="Startfrpc_Click" VerticalAlignment="Bottom"/>
+            <TextBox x:Name="frpcOutlog" ContextMenu="{DynamicResource UIContextMenu}" Margin="12,38,167,12" TextWrapping="Wrap" Text="日志" IsReadOnly="True" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" Padding="10"/>
         </Grid>
     </Border>
 </Page>

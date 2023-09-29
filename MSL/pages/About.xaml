@@ -87,7 +87,7 @@
                         <hc:Shield Subject="..." Status="打开网站" Margin="0,-45,20,0" Command="hc:ControlCommands.OpenLink" CommandParameter="https://github.com/dotnet/runtime" HorizontalAlignment="Right" VerticalAlignment="Top"/>
                     </StackPanel>
                     <StackPanel Margin="0,10,0,0">
-                        <TextBlock Text="10.OpenFrp OPENAPI" Margin="20,0,0,5" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="Bold" Foreground="{DynamicResource TextBlockBrush}"/>
+                        <TextBlock Text="12.OpenFrp OPENAPI" Margin="20,0,0,5" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="Bold" Foreground="{DynamicResource TextBlockBrush}"/>
                         <TextBlock Text="OpenFrp的公开API" Margin="20,0,0,5" VerticalAlignment="Top" HorizontalAlignment="Left" Foreground="{DynamicResource TextBlockBrush}"/>
                         <hc:Shield Subject="..." Status="打开网站" Margin="0,-45,20,0" Command="hc:ControlCommands.OpenLink" CommandParameter="https://github.com/ZGIT-Network/OPENFRP-APIDOC" HorizontalAlignment="Right" VerticalAlignment="Top"/>
                     </StackPanel>

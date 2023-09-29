@@ -22,13 +22,13 @@ namespace MSL
         string Url;
         string Dir;
         public string serverbase;
-        int loadType = 0;  //0: mods , 1: modpacks 
-        List<int> modIds = new List<int>();
-        List<string> modVersions = new List<string>();
-        List<string> modVersionurl = new List<string>();
-        List<string> modUrls = new List<string>();
-        List<string> imageUrls = new List<string>();
-        List<string> backList = new List<string>();
+        readonly int loadType = 0;  //0: mods , 1: modpacks 
+        readonly List<int> modIds = new List<int>();
+        readonly List<string> modVersions = new List<string>();
+        readonly List<string> modVersionurl = new List<string>();
+        readonly List<string> modUrls = new List<string>();
+        readonly List<string> imageUrls = new List<string>();
+        readonly List<string> backList = new List<string>();
         public DownloadMods(int loadtype = 0)
         {
             InitializeComponent();

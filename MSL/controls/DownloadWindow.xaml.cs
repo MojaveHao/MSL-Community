@@ -14,7 +14,7 @@ namespace MSL
     /// <summary>
     /// DownloadWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class DownloadWindow : Window
+    public partial class DownloadWindow : HandyControl.Controls.Window
     {
         //DownLoadFile dlf = new DownLoadFile();
         public static int downloadthread = 8;
@@ -63,7 +63,7 @@ namespace MSL
             // Download completed event that can include occurred errors or 
             // cancelled or download completed successfully.
             downloader.DownloadFileCompleted += OnDownloadFileCompleted;
-            _ = downloader.DownloadFileTaskAsync(downloadurl, downloadPath + "\\" + filename);
+            downloader.DownloadFileTaskAsync(downloadurl, downloadPath + "\\" + filename);
             while (isStopDwn != true)
             {
                 Thread.Sleep(1000);
@@ -144,7 +144,7 @@ namespace MSL
                 FileStream so = new FileStream(downloadPath + "\\" + filename, FileMode.Create);
                 long totalDownloadedByte = 0;
                 byte[] by = new byte[1024];
-                int osize = st.Read(by, 0, by.Length);
+                int osize = st.Read(by, 0, (int)by.Length);
                 Dispatcher.Invoke(() =>
                 {
                     if (pbar != null)
@@ -161,9 +161,9 @@ namespace MSL
                     totalDownloadedByte = osize + totalDownloadedByte;
                     DispatcherHelper.DoEvents();
                     so.Write(by, 0, osize);
-                    osize = st.Read(by, 0, by.Length);
+                    osize = st.Read(by, 0, (int)by.Length);
                     float percent = 0;
-                    percent = totalDownloadedByte / (float)totalBytes * 100;
+                    percent = (float)totalDownloadedByte / (float)totalBytes * 100;
                     Dispatcher.Invoke(() =>
                     {
                         if (pbar != null)
@@ -235,7 +235,7 @@ namespace MSL
             public static void DoEvents()
             {
                 DispatcherFrame frame = new DispatcherFrame();
-                _ = Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new DispatcherOperationCallback(ExitFrames), frame);
+                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new DispatcherOperationCallback(ExitFrames), frame);
                 try { Dispatcher.PushFrame(frame); }
                 catch (InvalidOperationException) { }
             }

@@ -27,7 +27,7 @@ namespace MSL.pages
         public static event DeleControl C_NotifyIcon;
         public static event DeleControl ChangeSkinStyle;
         public bool EnableUpdChk = false;
-        List<string> _runServerList = new List<string>();
+        readonly List<string> _runServerList = new List<string>();
         public SettingsPage()
         {
             InitializeComponent();
@@ -40,19 +40,20 @@ namespace MSL.pages
         {
             var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
             _ = DialogShow.ShowMsg(mainwindow, "恢复默认设置会清除MSL文件夹内的所有文件，请您谨慎选择！", "警告", true, "取消");
-            if (MessageDialog._dialogReturn)
+            if (!MessageDialog._dialogReturn)
             {
-                MessageDialog._dialogReturn = false;
-                try
-                {
-                    Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + @"MSL", true);
-                }
-                catch
-                {
-                }
-                _ = Process.Start(Application.ResourceAssembly.Location);
-                Process.GetCurrentProcess().Kill();
+                return;
             }
+            MessageDialog._dialogReturn = false;
+            try
+            {
+                Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + @"MSL", true);
+            }
+            catch
+            {
+            }
+            _ = Process.Start(Application.ResourceAssembly.Location);
+            Process.GetCurrentProcess().Kill();
         }
         private void notifyIconbtn_Click(object sender, RoutedEventArgs e)
         {
@@ -87,12 +88,12 @@ namespace MSL.pages
                     jobject["notifyIcon"] = "True";
                     string convertString = Convert.ToString(jobject);
                     File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
-                    Growl.Success("打开成功！");
+                    Growl.Success("打开成功");
                     return;
                 }
                 catch
                 {
-                    Growl.Error("打开失败！");
+                    Growl.Error("打开失败");
                     return;
                 }
             }
@@ -264,57 +265,51 @@ namespace MSL.pages
             if (BlueSkinBtn.IsChecked == true)
             {
                 BrushConverter brushConverter = new BrushConverter();
-                ThemeManager.Current.AccentColor = (System.Windows.Media.Brush)brushConverter.ConvertFromString("#0078D4");
+                ThemeManager.Current.AccentColor = (Brush)brushConverter.ConvertFromString("#0078D4");
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "1";
                 string convertString = Convert.ToString(jobject);
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", convertString, Encoding.UTF8);
-                Growl.Success("皮肤切换成功！");
             }
             else if (RedSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Red;
+                ThemeManager.Current.AccentColor = Brushes.Red;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "2";
                 string convertString = Convert.ToString(jobject);
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", convertString, Encoding.UTF8);
-                Growl.Success("皮肤切换成功！");
             }
             else if (GreenSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Green;
+                ThemeManager.Current.AccentColor = Brushes.Green;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "3";
                 string convertString = Convert.ToString(jobject);
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", convertString, Encoding.UTF8);
-                Growl.Success("皮肤切换成功！");
             }
             else if (OrangeSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Orange;
+                ThemeManager.Current.AccentColor = Brushes.Orange;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "4";
                 string convertString = Convert.ToString(jobject);
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", convertString, Encoding.UTF8);
-                Growl.Success("皮肤切换成功！");
             }
             else if (PurpleSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Purple;
+                ThemeManager.Current.AccentColor = Brushes.Purple;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "5";
                 string convertString = Convert.ToString(jobject);
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", convertString, Encoding.UTF8);
-                Growl.Success("皮肤切换成功！");
             }
             else if (PinkSkinBtn.IsChecked == true)
             {
-                ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.DeepPink;
+                ThemeManager.Current.AccentColor = Brushes.DeepPink;
                 JObject jobject = JObject.Parse(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", Encoding.UTF8));
                 jobject["skin"] = "6";
                 string convertString = Convert.ToString(jobject);
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "MSL\\config.json", convertString, Encoding.UTF8);
-                Growl.Success("皮肤切换成功！");
             }
         }
 

@@ -111,12 +111,12 @@ namespace MSL.forms
             {
                 try
                 {
-                    outlog.Content = "当前进度:获取Java下载地址";
+                    outlog.Content = "当前进度:获取Java下载地址……";
                     string _javaList = await AsyncGetJavaDwnLink();
 
                     JObject javaList0 = JObject.Parse(_javaList);
                     JObject javaList = (JObject)javaList0["java"];
-                    outlog.Content = "当前进度:下载Java";
+                    outlog.Content = "当前进度:下载Java……";
 
                     next3.IsEnabled = false;
                     return5.IsEnabled = false;
@@ -148,13 +148,13 @@ namespace MSL.forms
                                         dwnJava = DownloadJava("Java19", javaList["Java19"].ToString());
                                         break;
                                     default:
-                                        Growl.Error("选择一个版本以下载");
+                                        Growl.Error("请选择一个版本以下载！");
                                         break;
                                 }
                             });
                             if (dwnJava == 1)
                             {
-                                outlog.Content = "当前进度:解压Java";
+                                outlog.Content = "当前进度:解压Java……";
                                 bool unzipJava = await UnzipJava();
                                 if (unzipJava)
                                 {
@@ -187,15 +187,15 @@ namespace MSL.forms
                             }
                             else
                             {
-                                _ = DialogShow.ShowMsg(this, "下载取消", "提示");
+                                DialogShow.ShowMsg(this, "下载取消！", "提示");
                                 next3.IsEnabled = true;
                                 return5.IsEnabled = true;
                                 return;
                             }
                         }
-                        catch (Exception ex)
+                        catch
                         {
-                            Growl.Error("出现错误,请检查网络连接\n" + ex.Message);
+                            Growl.Error("出现错误，请检查网络连接！");
                         }
                     }
                 }
@@ -205,7 +205,7 @@ namespace MSL.forms
                     return5.IsEnabled = true;
                     await Dispatcher.InvokeAsync(() =>
                     {
-                        _ = DialogShow.ShowMsg(this, "出现错误检查您的网络连接", "信息", false, "确定");
+                        DialogShow.ShowMsg(this, "出现错误！请检查您的网络连接！", "信息", false, "确定");
                     });
                 }
             }
@@ -230,13 +230,13 @@ namespace MSL.forms
                         filestr += "\n" + i.ToString() + "." + file;
                         i++;
                     }
-                    bool ret = DialogShow.ShowInput(this, "开服器在整合包中检测到了以下jar文件,你可输选择一个作为开服核心(输入文件前对应的数字,取消为不选择以下文件)\n" + filestr, out string selectFile);
+                    bool ret = DialogShow.ShowInput(this, "开服器在整合包中检测到了以下jar文件，你可输选择一个作为开服核心（输入文件前对应的数字，取消为不选择以下文件）\n" + filestr, out string selectFile);
                     if (ret)
                     {
                         txb3.Text = files[int.Parse(selectFile)];
                         if (txb3.Text.Contains("forge") && txb3.Text.Contains("installer"))
                         {
-                            bool dialog = DialogShow.ShowMsg(this, "您选择的服务端是forge安装器,是否将其展开安装？\n如果不展开安装,服务器可能无法开启", "提示", true, "取消");
+                            bool dialog = DialogShow.ShowMsg(this, "您选择的服务端是forge安装器，是否将其展开安装？\n如果不展开安装，服务器可能无法开启！", "提示", true, "取消");
                             if (dialog)
                             {
                                 InstallForgeCustomMode();
@@ -250,13 +250,13 @@ namespace MSL.forms
                 }
                 else if (files.Count == 1)
                 {
-                    bool ret = DialogShow.ShowMsg(this, "开服器在整合包中检测到了jar文件" + files[0] + ",是否选择此文件为开服核心？", "提示", true, "取消");
+                    bool ret = DialogShow.ShowMsg(this, "开服器在整合包中检测到了jar文件" + files[0] + "，是否选择此文件为开服核心？", "提示", true, "取消");
                     if (ret)
                     {
                         txb3.Text = files[0];
                         if (txb3.Text.Contains("forge") && txb3.Text.Contains("installer"))
                         {
-                            bool dialog = DialogShow.ShowMsg(this, "您选择的服务端是forge安装器,是否将其展开安装？\n如果不展开安装,服务器可能无法开启", "提示", true, "取消");
+                            bool dialog = DialogShow.ShowMsg(this, "您选择的服务端是forge安装器，是否将其展开安装？\n如果不展开安装，服务器可能无法开启！", "提示", true, "取消");
                             if (dialog)
                             {
                                 InstallForgeCustomMode();
@@ -270,7 +270,7 @@ namespace MSL.forms
                 }
                 else if (files.Count == 0)
                 {
-                    Growl.Info("未在整合包中找到核心文件,请进行下载或手动选择已有核心,核心的版本要和整合包对应的游戏版本一致");
+                    Growl.Info("开服器未在整合包中找到核心文件，请您进行下载或手动选择已有核心，核心的版本要和整合包对应的游戏版本一致");
                 }
             }
         }
@@ -278,9 +278,9 @@ namespace MSL.forms
         {
             if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"MSL\" + fileName + @"\bin\java.exe"))
             {
-                _ = DialogShow.ShowMsg(this, "下载Java即代表您接受Java的服务条款https://www.oracle.com/downloads/licenses/javase-license1.html", "信息", false, "确定");
+                DialogShow.ShowMsg(this, "下载Java即代表您接受Java的服务条款https://www.oracle.com/downloads/licenses/javase-license1.html", "信息", false, "确定");
                 DownjavaName = fileName;
-                bool downDialog = DialogShow.ShowDownload(this, downUrl, AppDomain.CurrentDomain.BaseDirectory + "MSL", "Java.zip", "下载" + fileName + "中");
+                bool downDialog = DialogShow.ShowDownload(this, downUrl, AppDomain.CurrentDomain.BaseDirectory + "MSL", "Java.zip", "下载" + fileName + "中……");
                 if (downDialog)
                 {
                     return 1;
@@ -333,7 +333,7 @@ namespace MSL.forms
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                _ = DialogShow.ShowMsg(this, "解压失败,Java压缩包可能已损坏\n" + ex.Message + "\n(注:若多次重试均无法解压的话,自行去网络上下载安装并使用自定义模式来创建服务器)", "错误");
+                DialogShow.ShowMsg(this, "解压失败，Java压缩包可能已损坏，请重试！错误代码：" + ex.Message + "\n（注：若多次重试均无法解压的话，请自行去网络上下载安装并使用自定义模式来创建服务器）", "错误");
                 return false;
             }
         }
@@ -372,7 +372,7 @@ namespace MSL.forms
             {
                 if (!Directory.Exists(serverbase))
                 {
-                    _ = Directory.CreateDirectory(serverbase);
+                    Directory.CreateDirectory(serverbase);
                 }
 
                 if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"MSL\ServerList.json"))
@@ -409,12 +409,12 @@ namespace MSL.forms
                 }
                 jsonObject.Add(i.ToString(), _json);
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\ServerList.json", Convert.ToString(jsonObject), Encoding.UTF8);
-                _ = DialogShow.ShowMsg(this, "创建完毕", "信息");
+                DialogShow.ShowMsg(this, "创建完毕，请点击“开启服务器”按钮以开服", "信息");
                 Close();
             }
             catch (Exception ex)
             {
-                _ = MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("出现错误，请重试：" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -430,18 +430,21 @@ namespace MSL.forms
             OpenFileDialog openfile = new OpenFileDialog
             {
                 InitialDirectory = serverbase,
-                Title = "选择文件",
+                Title = "请选择文件",
                 Filter = "JAR文件|*.jar|所有文件类型|*.*"
             };
             var res = openfile.ShowDialog();
-            if (res == true) txb3.Text = openfile.FileName;
+            if (res == true)
+            {
+                txb3.Text = openfile.FileName;
+            }
         }
 
         private void a0003_Click(object sender, RoutedEventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog
             {
-                Description = "选择文件夹"
+                Description = "请选择文件夹"
             };
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -470,7 +473,7 @@ namespace MSL.forms
             OpenFileDialog openfile = new OpenFileDialog
             {
                 InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
-                Title = "MSLCommunity/选择Java可执行文件",
+                Title = "请选择文件，通常为java.exe",
                 Filter = "EXE文件|*.exe|所有文件类型|*.*"
             };
             var res = openfile.ShowDialog();
@@ -507,7 +510,7 @@ namespace MSL.forms
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
-                _ = process.Start();
+                process.Start();
 
                 string output = process.StandardError.ReadToEnd();
                 process.WaitForExit();
@@ -515,18 +518,18 @@ namespace MSL.forms
                 Match match = Regex.Match(output, @"java version \""([\d\._]+)\""");
                 if (match.Success)
                 {
-                    outlog.Content = "环境变量可用性检查完毕,您的环境变量正常";
+                    outlog.Content = "环境变量可用性检查完毕，您的环境变量正常！";
                     usejvPath.Content = "使用环境变量:" + "Java" + match.Groups[1].Value;
                 }
                 else
                 {
-                    _ = DialogShow.ShowMsg(this, "检测环境变量失败,您的环境变量似乎不存在", "错误");
+                    DialogShow.ShowMsg(this, "检测环境变量失败，您的环境变量似乎不存在！", "错误");
                     usedownloadjv.IsChecked = true;
                 }
             }
             catch
             {
-                _ = DialogShow.ShowMsg(this, "检测环境变量失败,您的环境变量似乎不存在", "错误");
+                DialogShow.ShowMsg(this, "检测环境变量失败，您的环境变量似乎不存在！", "错误");
                 usedownloadjv.IsChecked = true;
             }
         }
@@ -580,12 +583,12 @@ namespace MSL.forms
             }
             if (selectCheckedJavaComb.Items.Count > 0)
             {
-                outlog.Content = "检测完毕";
+                outlog.Content = "检测完毕！";
                 selectCheckedJavaComb.SelectedIndex = 0;
             }
             else
             {
-                outlog.Content = "检测完毕,未找到Java";
+                outlog.Content = "检测完毕，暂未找到Java";
                 usedownloadjv.IsChecked = true;
             }
         }
@@ -606,7 +609,7 @@ namespace MSL.forms
             if (match.Success)
             {
                 string javaVersion = match.Groups[1].Value;
-                _ = selectCheckedJavaComb.Items.Add("Java" + javaVersion + ":" + Path.GetDirectoryName(releaseFile) + "\\bin\\java.exe");
+                selectCheckedJavaComb.Items.Add("Java" + javaVersion + ":" + Path.GetDirectoryName(releaseFile) + "\\bin\\java.exe");
             }
         }
 
@@ -615,7 +618,7 @@ namespace MSL.forms
             servername = serverNameBox.Text;
             if (new Regex("[\u4E00-\u9FA5]").IsMatch(txb6.Text))
             {
-                bool result = DialogShow.ShowMsg(this, "使用带有中文的路径可能造成编码错误,导致无法开服,确定吗", "警告", true, "取消");
+                bool result = DialogShow.ShowMsg(this, "使用带有中文的路径可能造成编码错误，导致无法开服，您确定要继续吗？", "警告", true, "取消");
                 if (result == false)
                 {
                     return;
@@ -623,7 +626,7 @@ namespace MSL.forms
             }
             else if (txb6.Text.IndexOf(" ") + 1 != 0)
             {
-                bool result = DialogShow.ShowMsg(this, "使用带有空格的路径可能造成编码错误,导致无法开服,确定吗", "警告", true, "取消");
+                bool result = DialogShow.ShowMsg(this, "使用带有空格的路径可能造成编码错误，导致无法开服，您确定要继续吗？", "警告", true, "取消");
                 if (result == false)
                 {
                     return;
@@ -646,21 +649,20 @@ namespace MSL.forms
         bool isImportPack = false;
         private async void importPack_Click(object sender, RoutedEventArgs e)
         {
-            bool _dialog = DialogShow.ShowMsg(this, "导入本地整合包或者在线整合包", "提示", true, "导入本地整合包", "导入在线整合包");
+            bool _dialog = DialogShow.ShowMsg(this, "请选择你要导入本地整合包还是在线整合包！", "提示", true, "导入本地整合包", "导入在线整合包");
             if (_dialog)
             {
                 DownloadMods downloadMods = new DownloadMods(1)
                 {
                     Owner = this
                 };
-                _ = downloadMods.ShowDialog();
+                downloadMods.ShowDialog();
                 if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "MSL\\ServerPack.zip"))
                 {
-                    _ = DialogShow.ShowMsg(this, "下载失败", "错误");
+                    DialogShow.ShowMsg(this, "下载失败！", "错误");
                     return;
                 }
-                string input;
-                bool result = DialogShow.ShowInput(this, "服务器名称:", out input, "ImportedServer");
+                bool result = DialogShow.ShowInput(this, "服务器名称：", out string input, "ImportedServer");
                 if (result)
                 {
                     servername = input;
@@ -681,7 +683,7 @@ namespace MSL.forms
                     Dialog waitDialog = null;
                     try
                     {
-                        waitDialog = Dialog.Show(new TextDialog("解压整合包中"));
+                        waitDialog = Dialog.Show(new TextDialog("解压整合包中，请稍等……"));
                         await Task.Run(() => new FastZip().ExtractZip(AppDomain.CurrentDomain.BaseDirectory + "MSL\\ServerPack.zip", serverPath, ""));
                         DirectoryInfo[] dirs = new DirectoryInfo(serverPath).GetDirectories();
                         if (dirs.Length == 1)
@@ -692,18 +694,18 @@ namespace MSL.forms
                     }
                     catch (Exception ex)
                     {
-                        _ = this.Focus();
+                        this.Focus();
                         waitDialog.Close();
-                        _ = DialogShow.ShowMsg(this, "整合包解压失败\n" + ex.Message, "错误");
+                        DialogShow.ShowMsg(this, "整合包解压失败！请确认您的整合包是.zip格式！\n错误代码：" + ex.Message, "错误");
                         return;
                     }
-                    _ = this.Focus();
+                    this.Focus();
                     waitDialog.Close();
                     MainGrid.Visibility = Visibility.Hidden;
                     tabCtrl.Visibility = Visibility.Visible;
                     isImportPack = true;
                     serverbase = serverPath;
-                    Growl.Info("整合包解压完成在此界面选择Java环境");
+                    Growl.Info("整合包解压完成！请在此界面选择Java环境，Java的版本要和导入整合包的版本相对应，详情查看界面下方的表格");
                     sserver.IsSelected = true;
                     sserver.IsEnabled = true;
                     welcome.IsEnabled = false;
@@ -711,11 +713,10 @@ namespace MSL.forms
             }
             else
             {
-                bool dialog = DialogShow.ShowMsg(this, "如果您要导入的是模组整合包,确保您下载的整合包是服务器专用包,否则可能会出现无法开服或者崩溃的问题", "提示", true, "取消");
+                bool dialog = DialogShow.ShowMsg(this, "如果您要导入的是模组整合包，请确保您下载的整合包是服务器专用包（如RlCraft下载界面就有一个ServerPack的压缩包），否则可能会出现无法开服或者崩溃的问题！", "提示", true, "取消");
                 if (dialog == true)
                 {
-                    string input;
-                    bool result = DialogShow.ShowInput(this, "服务器名称", out input, "ImportedServer");
+                    bool result = DialogShow.ShowInput(this, "服务器名称：", out string input, "ImportedServer");
                     if (result)
                     {
                         servername = input;
@@ -736,7 +737,7 @@ namespace MSL.forms
                         OpenFileDialog openfile = new OpenFileDialog
                         {
                             InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "MSL",
-                            Title = "MSLCommunity/创建服务器/选择整合包压缩文件",
+                            Title = "请选择整合包压缩文件",
                             Filter = "ZIP文件|*.zip|所有文件类型|*.*"
                         };
                         var res = openfile.ShowDialog();
@@ -745,7 +746,7 @@ namespace MSL.forms
                             Dialog waitDialog = null;
                             try
                             {
-                                waitDialog = Dialog.Show(new TextDialog("解压整合包中,稍等"));
+                                waitDialog = Dialog.Show(new TextDialog("解压整合包中，请稍等……"));
                                 await Task.Run(() => new FastZip().ExtractZip(openfile.FileName, serverPath, ""));
                                 DirectoryInfo[] dirs = new DirectoryInfo(serverPath).GetDirectories();
                                 if (dirs.Length == 1)
@@ -755,18 +756,18 @@ namespace MSL.forms
                             }
                             catch (Exception ex)
                             {
-                                _ = this.Focus();
+                                this.Focus();
                                 waitDialog.Close();
-                                _ = DialogShow.ShowMsg(this, "整合包解压失败\n" + ex.Message, "错误");
+                                DialogShow.ShowMsg(this, "整合包解压失败！请确认您的整合包是.zip格式！\n错误代码：" + ex.Message, "错误");
                                 return;
                             }
-                            _ = this.Focus();
+                            this.Focus();
                             waitDialog.Close();
                             MainGrid.Visibility = Visibility.Hidden;
                             tabCtrl.Visibility = Visibility.Visible;
                             isImportPack = true;
                             serverbase = serverPath;
-                            Growl.Info("整合包解压完成,在此界面选择Java环境");
+                            Growl.Info("整合包解压完成！请在此界面选择Java环境，Java的版本要和导入整合包的版本相对应，详情查看界面下方的表格");
                             sserver.IsSelected = true;
                             sserver.IsEnabled = true;
                             welcome.IsEnabled = false;
@@ -787,7 +788,7 @@ namespace MSL.forms
                 {
                     Owner = this
                 };
-                _ = downloadServer.ShowDialog();
+                downloadServer.ShowDialog();
                 if (File.Exists(serverbase + @"\" + DownloadServer.downloadServerName))
                 {
                     servercore = DownloadServer.downloadServerName;
@@ -804,7 +805,7 @@ namespace MSL.forms
                 }
                 else
                 {
-                    _ = DialogShow.ShowMsg(this, "出现错误", "错误");
+                    DialogShow.ShowMsg(this, "出现错误，下载失败！", "错误");
                 }
             }
             else
@@ -813,7 +814,7 @@ namespace MSL.forms
                 {
                     if (!Directory.Exists(serverbase))
                     {
-                        _ = Directory.CreateDirectory(serverbase);
+                        Directory.CreateDirectory(serverbase);
                     }
                     string _filename = Path.GetFileName(txb3.Text);
                     if (Path.IsPathRooted(txb3.Text))
@@ -821,13 +822,13 @@ namespace MSL.forms
                         if (Path.GetDirectoryName(txb3.Text) != serverbase)
                         {
                             File.Copy(txb3.Text, serverbase + @"\" + _filename, true);
-                            _ = DialogShow.ShowMsg(this, "已将服务端文件移至服务器文件夹中,可将源文件删除", "提示");
+                            DialogShow.ShowMsg(this, "已将服务端文件移至服务器文件夹中！您可将源文件删除！", "提示");
                             txb3.Text = _filename;
                         }
                     }
                     if (txb3.Text.Contains("forge") && txb3.Text.Contains("installer"))
                     {
-                        bool dialog = DialogShow.ShowMsg(this, "您选择的服务端是forge安装器,建议将其展开安装,否则服务器可能无法开启", "提示", true, "取消");
+                        bool dialog = DialogShow.ShowMsg(this, "您选择的服务端是forge安装器，是否将其展开安装？\n如果不展开安装，服务器可能无法开启！", "提示", true, "取消");
                         if (dialog)
                         {
                             InstallForgeCustomMode();
@@ -842,7 +843,7 @@ namespace MSL.forms
                 }
                 catch (Exception ex)
                 {
-                    _ = DialogShow.ShowMsg(this, ex.Message, "错误");
+                    DialogShow.ShowMsg(this, ex.Message, "错误");
                 }
             }
         }
@@ -858,7 +859,7 @@ namespace MSL.forms
                 Process process = new Process();
                 process.StartInfo.FileName = serverjava;
                 process.StartInfo.Arguments = "-jar " + serverbase + @"\" + txb3.Text + " -installServer";
-                _ = process.Start();
+                process.Start();
                 Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
                 try
                 {
@@ -887,14 +888,14 @@ namespace MSL.forms
                         }
                         if (keepTrying)
                         {
-                            bool dialog = DialogShow.ShowMsg(this, "安装失败,多次尝试或使用代理再试\n点击确定重试", "错误", true, "取消");
+                            bool dialog = DialogShow.ShowMsg(this, "安装失败,请多次尝试或使用代理再试！\n点击确定重试！", "错误", true, "取消");
                             keepTrying = dialog;
                         }
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-                    _ = DialogShow.ShowMsg(this, "安装失败\n" + ex.Message, "错误");
+                    DialogShow.ShowMsg(this, "安装失败！", "错误");
                 }
             }
         }
@@ -907,7 +908,7 @@ namespace MSL.forms
         }
         private void usebasicfastJvm_Checked(object sender, RoutedEventArgs e)
         {
-            _ = MessageBox.Show("使用优化参数需要手动设置大小相同的内存,Java11以上勿选择", "警告", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            MessageBox.Show("使用优化参数需要手动设置大小相同的内存，请对上面的内存进行更改！Java11及以上请勿选择此优化参数！", "警告", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             useJVM.IsChecked = true;
             usefastJvm.IsChecked = false;
             txb7.Text = "-XX:+AggressiveOpts";
@@ -916,7 +917,7 @@ namespace MSL.forms
         }
         private void usefastJvm_Checked(object sender, RoutedEventArgs e)
         {
-            _ = MessageBox.Show("使用优化参数需要手动设置大小相同的内存", "警告", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            MessageBox.Show("使用优化参数需要手动设置大小相同的内存，请对上面的内存进行更改！", "警告", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             useJVM.IsChecked = true;
             usebasicfastJvm.IsChecked = false;
             txb7.Text = "-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true";
@@ -996,7 +997,7 @@ namespace MSL.forms
             }
             catch (Exception a)
             {
-                Growl.Info("获取服务端失败" + a.Message);
+                Growl.Info("获取服务端失败！请重试" + a.Message);
             }
         }
         List<string> typeVersions = new List<string>();
@@ -1008,7 +1009,7 @@ namespace MSL.forms
             tempServerCore.Clear();
             if (serverTypes == null)
             {
-                _ = DialogShow.ShowMsg(this, "服务端正在加载中", "提示");
+                DialogShow.ShowMsg(this, "服务端正在加载中，请稍后再选择！", "提示");
                 return;
             }
             Thread thread = new Thread(GetServerVersion);
@@ -1020,7 +1021,7 @@ namespace MSL.forms
             int selectType = 0;
             Dispatcher.Invoke(() =>
             {
-                ServerCoreDescrip.Text = "加载中";
+                ServerCoreDescrip.Text = "加载中，请稍等……";
                 selectType = ServerCoreCombo.SelectedIndex;
             });
             try
@@ -1035,9 +1036,9 @@ namespace MSL.forms
                         if (x == selectType)
                         {
                             string _serverType = serverType;
-                            if (serverType.Contains("("))
+                            if (serverType.Contains("（"))
                             {
-                                _serverType = serverType.Substring(0, serverType.IndexOf("("));
+                                _serverType = serverType.Substring(0, serverType.IndexOf("（"));
                             }
                             foreach (var coreType in coreTypes.Value)
                             {
@@ -1086,7 +1087,7 @@ namespace MSL.forms
                                         {
                                             Dispatcher.Invoke(() =>
                                             {
-                                                _ = DialogShow.ShowMsg(this, "获取服务端失败\n" + ex.Message, "错误");
+                                                DialogShow.ShowMsg(this, "获取服务端失败！请重试！\n错误代码：" + ex.Message, "错误");
                                             });
                                             return;
                                         }
@@ -1097,7 +1098,10 @@ namespace MSL.forms
                             x++;
                             //continue;
                         }
-                        else x++;
+                        else
+                        {
+                            x++;
+                        }
                     }
                     i++;
                 }
@@ -1106,7 +1110,7 @@ namespace MSL.forms
             {
                 Dispatcher.Invoke(() =>
                 {
-                    _ = DialogShow.ShowMsg(this, ex.Message, "错误");
+                    DialogShow.ShowMsg(this, "出现错误：" + ex.Message, "err");
                     FastModeNextBtn.IsEnabled = true;
                     return;
                 });
@@ -1120,25 +1124,25 @@ namespace MSL.forms
                 switch (ServerCoreCombo.SelectedIndex)
                 {
                     case 0:
-                        ServerCoreDescrip.Text = "插件服务器:指在服务端添加插件(客户端无需添加),通过更改服务端底层来增加功能,这种方式极易做到对服务器、服务器用户玩家进行管理,如权限组、封禁系统等,但这种方式不能修改客户端内容,所以也导致很多功能很难实现,如添加新的物品,只能通过更改材质包的方式让客户端显示新的物品";
+                        ServerCoreDescrip.Text = "插件服务器：指在服务端添加插件（客户端无需添加），通过更改服务端底层来增加功能，这种方式极易做到对服务器、服务器用户玩家进行管理，如权限组、封禁系统等，但这种方式不能修改客户端内容，所以也导致很多功能很难实现，如添加新的物品，只能通过更改材质包的方式让客户端显示新的物品";
                         break;
                     case 1:
-                        ServerCoreDescrip.Text = "插件模组混合服务器(Forge加载器):这种服务器将插件服务端和Forge服务端合二为一,既吸取了二者的优点(服务器管理功能可通过添加插件做到,添加新物品更改游戏玩法可通过添加模组做到),同时又有许多缺点(如服务器不稳定,同时添加插件和模组,极易造成冲突问题,且也存在模组服务器服务端和客户端需要同步模组的问题)";
+                        ServerCoreDescrip.Text = "插件模组混合服务器（Forge加载器）：这种服务器将插件服务端和Forge服务端合二为一，既吸取了二者的优点（服务器管理功能可通过添加插件做到，添加新物品更改游戏玩法可通过添加模组做到），同时又有许多缺点（如服务器不稳定，同时添加插件和模组，极易造成冲突问题，且也存在模组服务器服务端和客户端需要同步模组的问题）";
                         break;
                     case 2:
-                        ServerCoreDescrip.Text = "注意:此服务端的相关库文件源在海外,若多次出现下载失败的情况,换用混合服务端\n模组服务器(Forge加载器):指通过Forge加载器,添加模组来增加功能(服务端和客户端均需添加),这种方式既可以更改服务端的内容,也可以更改客户端的内容,所以插件服务器无法实现的功能在这里即可轻易做到,但是这种方式很难做到插件服的管理功能,且需要客户端的模组和服务端进行同步,会给玩家造成一定的麻烦";
+                        ServerCoreDescrip.Text = "注意：此服务端的相关库文件源在海外，若多次出现下载失败的情况，请换用混合服务端！\n模组服务器（Forge加载器）：指通过Forge加载器，添加模组来增加功能（服务端和客户端均需添加），这种方式既可以更改服务端的内容，也可以更改客户端的内容，所以插件服务器无法实现的功能在这里即可轻易做到，但是这种方式很难做到插件服的管理功能，且需要客户端的模组和服务端进行同步，会给玩家造成一定的麻烦";
                         break;
                     case 3:
-                        ServerCoreDescrip.Text = "模组服务器(Fabric):指通过Fabric加载器,添加模组来增加功能(服务端和客户端均需添加),这种方式既可以更改服务端的内容,也可以更改客户端的内容,所以插件服务器无法实现的功能在这里即可轻易做到,但是这种方式很难做到插件服的管理功能,且需要客户端的模组和服务端进行同步,会给玩家造成一定的麻烦";
+                        ServerCoreDescrip.Text = "模组服务器（Fabric加载器）：指通过Fabric加载器，添加模组来增加功能（服务端和客户端均需添加），这种方式既可以更改服务端的内容，也可以更改客户端的内容，所以插件服务器无法实现的功能在这里即可轻易做到，但是这种方式很难做到插件服的管理功能，且需要客户端的模组和服务端进行同步，会给玩家造成一定的麻烦";
                         break;
                     case 4:
-                        ServerCoreDescrip.Text = "原版服务器:Mojang纯原生服务器,不能添加任何插件或模组,给您原汁原味的体验";
+                        ServerCoreDescrip.Text = "原版服务器：Mojang纯原生服务器，不能添加任何插件或模组，给您原汁原味的体验";
                         break;
                     case 5:
-                        ServerCoreDescrip.Text = "基岩版服务器:专为基岩版提供的服务器,这种服务器在配置等方面和Java版服务器不太一样,同时开服器也不太适配,更改配置文件等相关操作只能您手动操作";
+                        ServerCoreDescrip.Text = "基岩版服务器：专为基岩版提供的服务器，这种服务器在配置等方面和Java版服务器不太一样，同时开服器也不太适配，更改配置文件等相关操作只能您手动操作";
                         break;
                     case 6:
-                        ServerCoreDescrip.Text = "代理服务器:指Java版群组服务器的转发服务器,这种服务器相当于一个桥梁,将玩家在不同的服务器之间进行传送转发,使用这种服务器您首先需要开启一个普通服务器,因为这种服务器没有游戏内容,如果没有普通服务器进行连接,玩家根本无法进入,且目前开服器并不兼容这种服务器,创建完毕后您需在列表右键该服务器并使用“命令行开服”功能来启动";
+                        ServerCoreDescrip.Text = "代理服务器：指Java版群组服务器的转发服务器，这种服务器相当于一个桥梁，将玩家在不同的服务器之间进行传送转发，使用这种服务器您首先需要开启一个普通服务器，因为这种服务器没有游戏内容，如果没有普通服务器进行连接，玩家根本无法进入，且目前开服器并不兼容这种服务器，创建完毕后您需在列表右键该服务器并使用“命令行开服”功能来启动";
                         break;
                 }
             });
@@ -1151,7 +1155,7 @@ namespace MSL.forms
             servername = ServerNameBox.Text;
             if (new Regex("[\u4E00-\u9FA5]").IsMatch(txb6.Text))
             {
-                bool result = DialogShow.ShowMsg(this, "开服器被放置于带有中文的目录里,中文目录可能会造成编码错误导致无法开服,您确定要继续吗？", "警告", true, "取消");
+                bool result = DialogShow.ShowMsg(this, "开服器被放置于带有中文的目录里，中文目录可能会造成编码错误导致无法开服，您确定要继续吗？", "警告", true, "取消");
                 if (result == false)
                 {
                     return;
@@ -1159,7 +1163,7 @@ namespace MSL.forms
             }
             else if (txb6.Text.IndexOf(" ") + 1 != 0)
             {
-                bool result = DialogShow.ShowMsg(this, "开服器被放置于带有空格的目录里,这种目录可能会造成编码错误导致无法开服,您确定要继续吗？", "警告", true, "取消");
+                bool result = DialogShow.ShowMsg(this, "开服器被放置于带有空格的目录里，这种目录可能会造成编码错误导致无法开服，您确定要继续吗？", "警告", true, "取消");
                 if (result == false)
                 {
                     return;
@@ -1180,7 +1184,7 @@ namespace MSL.forms
                 {
                     if (item.Key == ServerVersionCombo.SelectedItem.ToString() && !FinallyCoreCombo.Items.Contains(_item.Key + "-" + item.Key))
                     {
-                        _ = FinallyCoreCombo.Items.Add(_item.Key + "-" + item.Key);
+                        FinallyCoreCombo.Items.Add(_item.Key + "-" + item.Key);
                         downloadCoreUrl.Add(item.Value);
                     }
                 }
@@ -1193,7 +1197,7 @@ namespace MSL.forms
                     versionString = versionString.Substring(0, versionString.IndexOf("-"));
                 }
                 string[] components = versionString.Split('.');
-                if (components.Length >= 3 && int.TryParse(components[2], out _))
+                if (components.Length >= 3 && int.TryParse(components[2], out int _))
                 {
                     versionString = $"{components[0]}.{components[1]}"; // remove the last component
                 }
@@ -1207,31 +1211,26 @@ namespace MSL.forms
                 if (_version <= targetVersion1)
                 {
                     //_version <=1.7
-                    FinallyJavaDescrip.Text = "根据您的选择,最适合您服务器的Java版本为:Java7-Java8";
                     FinallyJavaCombo.SelectedIndex = 0;
                 }
                 else if (_version <= targetVersion2)
                 {
                     //1.7< _version <=1.12
-                    FinallyJavaDescrip.Text = "根据您的选择,最适合您服务器的Java版本为:Java8-Java11";
                     FinallyJavaCombo.SelectedIndex = 0;
                 }
                 else if (_version <= targetVersion3)
                 {
                     //1.12< _version <=1.17
-                    FinallyJavaDescrip.Text = "根据您的选择,最适合您服务器的Java版本为:Java11-Java17(或更高)";
                     FinallyJavaCombo.SelectedIndex = 3;
                 }
                 else
                 {
                     //_version >1.17
-                    FinallyJavaDescrip.Text = "根据您的选择,最适合您服务器的Java版本为:Java18-Java19(或更高)";
                     FinallyJavaCombo.SelectedIndex = 5;
                 }
             }
             else
             {
-                FinallyJavaDescrip.Text = "根据您的选择,最适合您服务器的Java版本为:Java8-Java19(或更高)";
                 FinallyJavaCombo.SelectedIndex = 5;
             }
             FinallyCoreCombo.SelectedIndex = 0;
@@ -1263,13 +1262,13 @@ namespace MSL.forms
             try
             {
                 FastModeInstallBtn.IsEnabled = false;
-                FastInstallProcess.Text = "当前进度:获取Java下载地址";
+                FastInstallProcess.Text = "当前进度:获取Java下载地址……";
                 //Thread.Sleep(1000);
                 string _javaList = await AsyncGetJavaDwnLink();
 
                 JObject javaList0 = JObject.Parse(_javaList);
                 JObject javaList = (JObject)javaList0["java"];
-                FastInstallProcess.Text = "当前进度:下载Java";
+                FastInstallProcess.Text = "当前进度:下载Java……";
                 int dwnJava = 0;
                 await Dispatcher.InvokeAsync(() =>
                 {
@@ -1294,17 +1293,17 @@ namespace MSL.forms
                             dwnJava = DownloadJava("Java19", javaList["Java19"].ToString());
                             break;
                         default:
-                            Growl.Error("选择一个版本以下载");
+                            Growl.Error("请选择一个版本以下载！");
                             break;
                     }
                 });
                 if (dwnJava == 1)
                 {
-                    FastInstallProcess.Text = "当前进度:解压Java";
+                    FastInstallProcess.Text = "当前进度:解压Java……";
                     bool unzipJava = await UnzipJava();
                     if (unzipJava)
                     {
-                        FastInstallProcess.Text = "当前进度:下载服务端";
+                        FastInstallProcess.Text = "当前进度:下载服务端……";
                         await Dispatcher.InvokeAsync(() =>
                         {
                             FastModeInstallCore();
@@ -1318,7 +1317,7 @@ namespace MSL.forms
                 }
                 else if (dwnJava == 2)
                 {
-                    FastInstallProcess.Text = "当前进度:下载服务端";
+                    FastInstallProcess.Text = "当前进度:下载服务端……";
                     await Dispatcher.InvokeAsync(() =>
                     {
                         FastModeInstallCore();
@@ -1326,26 +1325,26 @@ namespace MSL.forms
                 }
                 else
                 {
-                    _ = DialogShow.ShowMsg(this, "下载取消", "提示");
-                    FastInstallProcess.Text = "取消安装";
+                    DialogShow.ShowMsg(this, "下载取消！", "提示");
+                    FastInstallProcess.Text = "取消安装！";
                     FastModeInstallBtn.IsEnabled = true;
                     return;
                 }
             }
             catch
             {
-                Growl.Error("出现错误,检查网络连接");
+                Growl.Error("出现错误，请检查网络连接！");
                 FastModeInstallBtn.IsEnabled = true;
             }
         }
         void FastModeInstallCore()
         {
             string filename = FinallyCoreCombo.Items[FinallyCoreCombo.SelectedIndex].ToString() + ".jar";
-            bool dwnDialog = DialogShow.ShowDownload(this, downloadCoreUrl[FinallyCoreCombo.SelectedIndex], serverbase, filename, "下载服务端中");
+            bool dwnDialog = DialogShow.ShowDownload(this, downloadCoreUrl[FinallyCoreCombo.SelectedIndex], serverbase, filename, "下载服务端中……");
             if (!dwnDialog)
             {
-                _ = DialogShow.ShowMsg(this, "下载取消", "提示");
-                FastInstallProcess.Text = "取消安装";
+                DialogShow.ShowMsg(this, "下载取消！", "提示");
+                FastInstallProcess.Text = "取消安装！";
                 FastModeInstallBtn.IsEnabled = true;
                 return;
             }
@@ -1355,12 +1354,12 @@ namespace MSL.forms
                 bool installReturn = true;
                 if (filename.IndexOf("Forge") + 1 != 0)
                 {
-                    _ = DialogShow.ShowMsg(this, "检测到您下载的是Forge端,开服器将自动进行安装操作,稍后您不要随意移动鼠标且不要随意触碰键盘,耐心等待安装完毕", "提示");
+                    DialogShow.ShowMsg(this, "检测到您下载的是Forge端，开服器将自动进行安装操作，稍后请您不要随意移动鼠标且不要随意触碰键盘，耐心等待安装完毕！", "提示");
                     installReturn = InstallForge();
                 }
                 if (installReturn)
                 {
-                    FastInstallProcess.Text = "当前进度:完成";
+                    FastInstallProcess.Text = "当前进度:完成！";
                     try
                     {
                         if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"MSL\ServerList.json"))
@@ -1396,24 +1395,24 @@ namespace MSL.forms
                         }
                         jsonObject.Add(i.ToString(), _json);
                         File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\ServerList.json", Convert.ToString(jsonObject), Encoding.UTF8);
-                        _ = DialogShow.ShowMsg(this, "创建完毕", "信息");
+                        DialogShow.ShowMsg(this, "创建完毕，请点击“开启服务器”按钮以开服", "信息");
                         Close();
                     }
                     catch (Exception ex)
                     {
-                        _ = MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("出现错误，请重试：" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         FastModeInstallBtn.IsEnabled = true;
                     }
                 }
                 else
                 {
-                    _ = DialogShow.ShowMsg(this, "下载失败,多次尝试或使用代理再试", "错误");
+                    DialogShow.ShowMsg(this, "下载失败,请多次尝试或使用代理再试！", "错误");
                     FastModeInstallBtn.IsEnabled = true;
                 }
             }
             else
             {
-                _ = DialogShow.ShowMsg(this, "下载失败", "错误");
+                DialogShow.ShowMsg(this, "下载失败！", "错误");
                 FastModeInstallBtn.IsEnabled = true;
             }
         }
@@ -1448,7 +1447,7 @@ namespace MSL.forms
             Process process = new Process();
             process.StartInfo.FileName = serverjava;
             process.StartInfo.Arguments = "-jar " + serverbase + @"\" + filename + " -installServer";
-            _ = process.Start();
+            process.Start();
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             try
             {
@@ -1501,35 +1500,6 @@ namespace MSL.forms
             InstallGrid.Visibility = Visibility.Hidden;
             FastModeGrid.Visibility = Visibility.Visible;
             //FastModeNextBtn.IsEnabled=false;
-        }
-
-        private void importPresent_Click(object sender, RoutedEventArgs e)
-        {
-            InstallGrid.Visibility = Visibility.Hidden;
-            MainGrid.Visibility = Visibility.Hidden;
-            ImportPresentGrid.Visibility = Visibility.Visible;
-        }
-
-        private void PrsModeNextBtn_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void SelectPrs_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openfile = new OpenFileDialog
-            {
-                InitialDirectory = serverbase,
-                Title = "MSLCommunity/选择服务端文件",
-                Filter = "JAR文件|*.jar"
-            };
-            var res = openfile.ShowDialog();
-            if (res == true) txb3.Text = openfile.FileName;
-        }
-
-        private void PrsFinishBtn_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

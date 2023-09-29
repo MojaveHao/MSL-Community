@@ -265,8 +265,10 @@ namespace MSL.pages
                 });
                 try
                 {
-                    JObject patientinfo = new JObject();
-                    patientinfo["server_name"] = serverName;
+                    JObject patientinfo = new JObject
+                    {
+                        ["server_name"] = serverName
+                    };
                     string sendData = JsonConvert.SerializeObject(patientinfo);
                     string resultData = Functions.Post("serverlist", 0, sendData);
                     JObject serverDetails = JObject.Parse(resultData);
@@ -284,8 +286,10 @@ namespace MSL.pages
                 {
                     try
                     {
-                        JObject patientinfo = new JObject();
-                        patientinfo["server_name"] = serverName;
+                        JObject patientinfo = new JObject
+                        {
+                            ["server_name"] = serverName
+                        };
                         string sendData = JsonConvert.SerializeObject(patientinfo);
                         string resultData = Functions.Post("serverlist", 0, sendData, "https://api.waheal.top");
                         JObject serverDetails = JObject.Parse(resultData);

@@ -108,6 +108,18 @@ namespace MSL
                         File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", string.Format("{{{0}}}", "\n"));
                     }));
                 }
+                //下面代码将在后续版本删除******
+                try
+                {
+                    if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "MSL\\TabComplete.txt"))
+                    {
+                        File.Delete(AppDomain.CurrentDomain.BaseDirectory + "MSL\\TabComplete.txt");
+                    }
+                }
+                catch
+                {
+                    Growl.Error("无法创建TabComplete(MainWindow,112)");
+                }
             }
             catch (Exception ex)
             {
