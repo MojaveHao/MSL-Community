@@ -30,8 +30,8 @@ namespace MSL
         string pageHtml;
         public string frpchome = $@"{AppDomain.CurrentDomain.BaseDirectory}MSL\frpc.ini";
 
-        public string id;
-        public string auth;
+        public string id = "";
+        public string auth = "";
         public string token;
         public string proxy;
         public string Password;
@@ -391,7 +391,7 @@ namespace MSL
                 }
                 #endregion
             }
-            else if (frpProvider.SelectedIndex == 1)
+            else if (frpProvider.SelectedIndex >= 1)
             {
                 #region 写入OpenFrp的配置信息
                 if (textBoxPort.Text == "")
@@ -399,45 +399,63 @@ namespace MSL
                     _ = DialogShow.ShowMsg(this, "请确保内网端口不为空", "错误");
                     return;
                 }
-                string type = "tcp";
-                if (frpcType.SelectedIndex == 0) type = "tcp";
-                else if (frpcType.SelectedIndex == 1) type = "udp";
-                bool zip;
-                if ((bool)enableCompression.IsChecked) zip = true;
-                else zip = false;
-                string selected_node = listNodes.SelectedItem.ToString();
-                int selected_node_id;
-                if (selected_node != null) selected_node_id = Convert.ToInt16(nodelist[selected_node]);
-                else
-                {
-                    _ = MessageBox.Show("请确保选择了节点", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                string port = textBoxPort.Text;
                 APIControl control = new APIControl();
-                (LoginMessage, string) proxy_name = control.CreateProxy(id, auth, type, port, zip, selected_node_id, jArray, this);
-                try
+                #region 新建隧道
+                if (frpProvider.SelectedIndex == 1)
                 {
-                    if (proxy_name.Item1 != null)
+                    string type = "tcp";
+                    if (frpcType.SelectedIndex == 0) type = "tcp";
+                    else if (frpcType.SelectedIndex == 1) type = "udp";
+                    bool zip;
+                    if ((bool)enableCompression.IsChecked) zip = true;
+                    else zip = false;
+                    string selected_node = listNodes.SelectedItem.ToString();
+                    int selected_node_id;
+                    if (selected_node != null) selected_node_id = Convert.ToInt16(nodelist[selected_node]);
+                    else
                     {
-                        if (proxy_name.Item1.flag)
+                        _ = MessageBox.Show("请确保选择了节点", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                    string port = textBoxPort.Text;
+                    (LoginMessage, string) proxy_name = control.CreateProxy(id, auth, type, port, zip, selected_node_id, jArray, this);
+                    try
+                    {
+                        if (proxy_name.Item1 != null)
                         {
-                            string proxy = control.GetUserNodeId(id, auth, proxy_name.Item2, this);
-                            File.WriteAllText(frpchome, $"-u {token} -p {proxy}");
-                        }
-                        else
-                        {
-                            _ = DialogShow.ShowMsg(this, "创建隧道失败\n" + proxy_name.Item1.msg, "失败");
+                            if (proxy_name.Item1.flag)
+                            {
+                                string proxy = control.GetUserNodeId(id, auth, proxy_name.Item2, this);
+                                File.WriteAllText(frpchome, $"-u {token} -p {proxy}");
+                            }
+                            else
+                            {
+                                _ = DialogShow.ShowMsg(this, "创建隧道失败\n" + proxy_name.Item1.msg, "失败");
+                            }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        _ = DialogShow.ShowMsg(this, "创建隧道失败\n" + ex.Message, "失败");
+                    }
                 }
-                catch (Exception ex)
+                #endregion
+                #region 现有隧道
+                else if (frpProvider.SelectedIndex == 2)
                 {
-                    _ = DialogShow.ShowMsg(this, "创建隧道失败\n" + ex.Message, "失败");
+                    object o = listNodes.SelectedValue;
+                    if (Equals(o, null))
+                    {
+                        _ = MessageBox.Show("请确保选择了节点", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                    string id = nodelist[o.ToString()];
+                    File.WriteAllText(frpchome, $"-u {token} -p {id}");
                 }
-
+                #endregion
                 #endregion
             }
+            Close();
         }
 
         private void ListBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -473,24 +491,19 @@ namespace MSL
         {
             DialogShow.ShowMsg(this, "点击确定后，开服器会弹出一个输入框，同时为您打开爱发电网站，您需要在爱发电购买的时候备注自己的QQ号（纯数字，不要夹带其他内容），购买完毕后，返回开服器，将您的QQ号输入进弹出的输入框中，开服器会自动为您获取密码。\n（注：付费密码在购买后会在服务器保存30分钟，请及时返回开服器进行操作，如果超时，请自行添加QQ：483232994来手动获取）", "购买须知");
             Process.Start("https://afdian.net/a/makabaka123");
-            bool input = DialogShow.ShowInput(this, "输入您在爱发电备注的QQ号：", out string text);
+            bool input = DialogShow.ShowInput(this, "备注的QQ号", out string text);
             if (input)
             {
                 Dialog _dialog = null;
                 try
                 {
-                    _dialog = Dialog.Show(new TextDialog("获取密码中，请稍等……"));
-                    JObject patientinfo = new JObject
-                    {
-                        ["qq"] = text
-                    };
-                    string sendData = JsonConvert.SerializeObject(patientinfo);
-                    string ret = await Task.Run(() => Functions.Post("getpassword", 0, sendData, "http://111.180.189.249:6000"));
-                    this.Focus();
+                    _dialog = Dialog.Show(new TextDialog("获取密码中"));
+                    string ret = await Task.Run(() => Functions.Post("getpassword", 1, text, "http://111.180.189.249:7004"));
+                    Focus();
                     _dialog.Close();
                     if (ret != "Err")
                     {
-                        bool dialog = DialogShow.ShowMsg(this, "您的付费密码为：" + ret + " 请牢记！", "获取成功！", true, "确定", "复制&确定");
+                        bool dialog = DialogShow.ShowMsg(this, "您的付费密码为:" + ret + " 请妥善保存", "获取成功", true, "确定", "复制&确定");
                         if (dialog)
                         {
                             Clipboard.SetDataObject(ret);
@@ -498,14 +511,14 @@ namespace MSL
                     }
                     else
                     {
-                        DialogShow.ShowMsg(this, "您的密码可能长时间无人获取，已经超时！请添加QQ：483232994（昵称：MSL-FRP），并发送赞助图片来手动获取密码\r\n（注：回复消息不一定及时，请耐心等待！如果没有添加成功，或者添加后长时间无人回复，请进入MSL交流群然后从群里私聊）", "获取失败！");
+                        DialogShow.ShowMsg(this, "您的密码可能长时间无人获取,已经超时\n请加QQ483232994并发送赞助图片来手动获取密码\r\n", "获取失败");
                     }
                 }
                 catch
                 {
-                    this.Focus();
+                    Focus();
                     _dialog.Close();
-                    DialogShow.ShowMsg(this, "获取失败，请添加QQ：483232994（昵称：MSL-FRP），并发送赞助图片来手动获取密码\r\n（注：回复消息不一定及时，请耐心等待！如果没有添加成功，或者添加后长时间无人回复，请进入MSL交流群然后从群里私聊）", "获取失败！");
+                    DialogShow.ShowMsg(this, "获取失败,请加QQ483232994并发送赞助图片来手动获取密码\r\n", "获取失败");
                 }
             }
         }
@@ -528,99 +541,107 @@ namespace MSL
                 }
                 else if (frpProvider.SelectedIndex == 1) //OpenFrp(新建隧道)
                 {
-                    usePaidProtocol.SelectedIndex = 2;
-                    usePaidProtocol.IsEnabled = false;
-                    bool input_account = DialogShow.ShowInput(this, "OpenFrp的账户名/邮箱", out string account);
-                    if (input_account)
+                    APIControl control = new APIControl();
+                    if (id == "" || auth == "")
                     {
-                        bool input_paswd = DialogShow.ShowInput(this, account + "的密码", out string password);
-                        if (input_paswd)
+                        usePaidProtocol.SelectedIndex = 2;
+                        usePaidProtocol.IsEnabled = false;
+                        bool input_account = DialogShow.ShowInput(this, "OpenFrp的账户名/邮箱", out string account);
+                        if (input_account)
                         {
-                            APIControl control = new APIControl();
-                            (UserwithSessionID, string) login = control.Login(account, password, this);
-                            UserwithSessionID userwithSessionID = login.Item1;
-                            token = login.Item2;                            
-                            if (userwithSessionID != null)
-                            {
-                                auth = userwithSessionID.auth;
-                                id = userwithSessionID.session;
-                                (Dictionary<string, string>, JArray) process = control.GetNodeList(id, auth, this);
-                                Dictionary<string, string> item1 = process.Item1;
-                                nodelist = item1;
-                                jArray = process.Item2;
-                                listNodes.Items.Clear();
-                                list1.Clear();
-                                list2.Clear();
-                                list3.Clear();
-                                list4.Clear();
-                                foreach (var node in item1)
+                            bool input_paswd = DialogShow.ShowInput(this, account + "的密码", out string password);
+                            if (input_paswd)
+                            {                                
+                                (UserwithSessionID, string) login = control.Login(account, password, this);
+                                UserwithSessionID userwithSessionID = login.Item1;
+                                token = login.Item2;
+                                if (userwithSessionID != null)
                                 {
-                                    _ = listNodes.Items.Add(node.Key);
+                                    auth = userwithSessionID.auth;
+                                    id = userwithSessionID.session;
                                 }
+                            }
+                            else
+                            {
+                                _ = DialogShow.ShowMsg(this, "请确保输入了密码", "登录失败");
+                                frpProvider.SelectedIndex = 0;
                             }
                         }
                         else
                         {
-                            _ = DialogShow.ShowMsg(this, "请确保输入了密码", "登录失败");
+                            _ = DialogShow.ShowMsg(this, "请确保输入了账户", "登录失败");
                             frpProvider.SelectedIndex = 0;
                         }
                     }
-                    else
+                    (Dictionary<string, string>, JArray) process = control.GetNodeList(id, auth, this);
+                    Dictionary<string, string> item1 = process.Item1;
+                    nodelist = item1;
+                    jArray = process.Item2;
+                    listNodes.Items.Clear();
+                    list1.Clear();
+                    list2.Clear();
+                    list3.Clear();
+                    list4.Clear();
+                    foreach (var node in item1)
                     {
-                        _ = DialogShow.ShowMsg(this, "请确保输入了账户", "登录失败");
-                        frpProvider.SelectedIndex = 0;
+                        _ = listNodes.Items.Add(node.Key);
                     }
                 }
 
                 else if (frpProvider.SelectedIndex == 2)//OpenFrp(使用现有)
-                {
-                    usePaidProtocol.SelectedIndex = 2;
-                    usePaidProtocol.IsEnabled = false;
-                    bool input_account = DialogShow.ShowInput(this, "OpenFrp的账户名/邮箱", out string account);
-                    if (input_account)
-                    {
-                        bool input_paswd = DialogShow.ShowInput(this, account + "的密码", out string password);
-                        if (input_paswd)
+                {                    
+                    APIControl control = new APIControl();
+                    if (id == "" || auth == "")
+                    {                        
+                        usePaidProtocol.SelectedIndex = 2;
+                        usePaidProtocol.IsEnabled = false;
+                        bool input_account = DialogShow.ShowInput(this, "OpenFrp的账户名/邮箱", out string account);
+                        if (input_account)
                         {
-                            APIControl control = new APIControl();
-                            (UserwithSessionID, string) login = control.Login(account, password, this);
-                            UserwithSessionID userwithSessionID = login.Item1;
-                            token = login.Item2;                            
-                            if (userwithSessionID != null)
+                            bool input_paswd = DialogShow.ShowInput(this, account + "的密码", out string password);
+                            if (input_paswd)
                             {
-                                auth = userwithSessionID.auth;
-                                id = userwithSessionID.session;
-                                Dictionary<string, string>process = control.GetUserNodes(id, auth, this);
-                                listNodes.Items.Clear();
-                                list1.Clear();
-                                list2.Clear();
-                                list3.Clear();
-                                list4.Clear();
-                                if (process.Count != 0)
+                                //APIControl control = new APIControl();
+                                (UserwithSessionID, string) login = control.Login(account, password, this);
+                                UserwithSessionID userwithSessionID = login.Item1;
+                                token = login.Item2;
+                                if (userwithSessionID != null)
                                 {
-                                    foreach (KeyValuePair<string, string> node in process)
-                                    {
-                                        _ = listNodes.Items.Add(node.Key);
-                                    }
+                                    auth = userwithSessionID.auth;
+                                    id = userwithSessionID.session;
                                 }
-                                else
-                                {
-                                    DialogShow.ShowMsg(this, "你的账户看起来一条隧道也没有", "错误");
-                                    frpProvider.SelectedIndex = 0;
-                                    return;
-                                }
+                            }
+                            else
+                            {
+                                _ = DialogShow.ShowMsg(this, "请确保输入了密码", "登录失败");
+                                frpProvider.SelectedIndex = 0;
                             }
                         }
                         else
                         {
-                            _ = DialogShow.ShowMsg(this, "请确保输入了密码", "登录失败");
+                            _ = DialogShow.ShowMsg(this, "请确保输入了账户", "登录失败");
                             frpProvider.SelectedIndex = 0;
+                        }
+                    }                    
+                    Dictionary<string, string> process = control.GetUserNodes(id, auth, this);
+                    listNodes.Items.Clear();
+                    list1.Clear();
+                    list2.Clear();
+                    list3.Clear();
+                    list4.Clear();
+                    if (process.Count != 0)
+                    {
+                        nodelist = process;
+                        foreach (KeyValuePair<string, string> node in process)
+                        {
+                            _ = listNodes.Items.Add(node.Key);
                         }
                     }
                     else
                     {
-                        _ = DialogShow.ShowMsg(this, "请确保输入了账户", "登录失败");
+                        DialogShow.ShowMsg(this, "你的账户看起来一条隧道也没有", "错误");
                         frpProvider.SelectedIndex = 0;
+                        return;
                     }
                 }
 

@@ -344,7 +344,7 @@ namespace MSL.forms
         }
         private void usedefault_Checked(object sender, RoutedEventArgs e)
         {
-            if (this.IsLoaded)
+            if (IsLoaded)
             {
                 txb4.IsEnabled = false;
                 txb5.IsEnabled = false;
@@ -484,7 +484,7 @@ namespace MSL.forms
         }
         private void usedownloadjv_Checked(object sender, RoutedEventArgs e)
         {
-            if (this.IsLoaded)
+            if (IsLoaded)
             {
                 txjava.IsEnabled = false;
                 a0002_Copy.IsEnabled = false;
@@ -540,7 +540,7 @@ namespace MSL.forms
         }
         private void usedownloadserver_Checked(object sender, RoutedEventArgs e)
         {
-            if (this.IsLoaded)
+            if (IsLoaded)
             {
                 txb3.IsEnabled = false;
                 a0002.IsEnabled = false;
@@ -694,12 +694,12 @@ namespace MSL.forms
                     }
                     catch (Exception ex)
                     {
-                        this.Focus();
+                        Focus();
                         waitDialog.Close();
                         DialogShow.ShowMsg(this, "整合包解压失败！请确认您的整合包是.zip格式！\n错误代码：" + ex.Message, "错误");
                         return;
                     }
-                    this.Focus();
+                    Focus();
                     waitDialog.Close();
                     MainGrid.Visibility = Visibility.Hidden;
                     tabCtrl.Visibility = Visibility.Visible;
@@ -756,12 +756,12 @@ namespace MSL.forms
                             }
                             catch (Exception ex)
                             {
-                                this.Focus();
+                                Focus();
                                 waitDialog.Close();
                                 DialogShow.ShowMsg(this, "整合包解压失败！请确认您的整合包是.zip格式！\n错误代码：" + ex.Message, "错误");
                                 return;
                             }
-                            this.Focus();
+                            Focus();
                             waitDialog.Close();
                             MainGrid.Visibility = Visibility.Hidden;
                             tabCtrl.Visibility = Visibility.Visible;
@@ -937,7 +937,7 @@ namespace MSL.forms
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void FastModeBtn_Click(object sender, RoutedEventArgs e)

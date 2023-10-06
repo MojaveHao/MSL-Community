@@ -146,15 +146,12 @@ namespace MSL.OfAPI
                 StreamReader reader = new StreamReader(dataStream);
                 string responseMessage = reader.ReadToEnd();
                 Dictionary<string, string> Nodes = new Dictionary<string, string>();
-                JObject jo = (JObject)JsonConvert.DeserializeObject(responseMessage);
+                JObject jo = (JObject)JsonConvert.DeserializeObject(responseMessage);                
                 JArray jArray = JArray.Parse(jo["data"]["list"].ToString());
                 foreach (JToken node in jArray)
                 {
-                    if (Convert.ToBoolean(node["online"]) && Convert.ToBoolean(node["status"]))
-                    {
-                        Nodes.Add(node["name"].ToString(), node["id"].ToString());
-                        DialogShow.ShowMsg(window, node["name"].ToString(), node["id"].ToString());
-                    }
+                    Nodes.Add(node["proxyName"].ToString(), node["id"].ToString());
+                    _ = DialogShow.ShowMsg(window, node["proxyName"].ToString(), node["id"].ToString());
                 }
                 return Nodes;
             }

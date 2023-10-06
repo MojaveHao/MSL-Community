@@ -43,8 +43,8 @@ namespace MSL
 
             public MODsInfo(string icon, string state)
             {
-                this.Icon = icon;
-                this.State = state;
+                Icon = icon;
+                State = state;
             }
         }
         private async void Window_Loaded(object sender, RoutedEventArgs e)

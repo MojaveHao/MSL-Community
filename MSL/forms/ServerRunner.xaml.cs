@@ -153,7 +153,7 @@ namespace MSL
                 fileforceUTF8encoding.Content = "强制服务器文件UTF8编码:开";
             }
 
-            this.Title = Rservername;//set title to server name
+            Title = Rservername;//set title to server name
 
             bool isChangeConfig = false;
             if (!Directory.Exists(Rserverbase))
@@ -174,7 +174,7 @@ namespace MSL
             }
             else if (File.Exists(Rserverbase + "\\server-icon.png"))//check server-icon,if exist,set icon to server-icon
             {
-                this.Icon = new BitmapImage(new Uri(Rserverbase + "\\server-icon.png"));
+                Icon = new BitmapImage(new Uri(Rserverbase + "\\server-icon.png"));
                 //IconBox.Source = new BitmapImage(new Uri(Rserverbase + "\\server-icon.png"));
             }
             if (Rserverjava != "Java" && Rserverjava != "java" && !File.Exists(Rserverjava))
@@ -2899,7 +2899,7 @@ namespace MSL
         }
         private void memoryInfo_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (this.IsLoaded)
+            if (IsLoaded)
             {
                 if (useJVMself.IsChecked == true)
                 {
@@ -3509,7 +3509,7 @@ namespace MSL
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (this.WindowState == WindowState.Maximized)
+            if (WindowState == WindowState.Maximized)
             {
                 MainGrid.Margin = new Thickness(7);
 

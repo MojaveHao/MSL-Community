@@ -11,8 +11,8 @@ namespace MSL.controls
         public InputDialog(Window window, string dialogText, string textboxText)
         {
             InitializeComponent();
-            this.MaxHeight = window.ActualHeight;
-            this.MaxWidth = window.ActualWidth - 200;
+            MaxHeight = window.ActualHeight;
+            MaxWidth = window.ActualWidth - 200;
             _dialogReturn = false;
             bodyText.Text = dialogText;
             textBox.Text = textboxText;

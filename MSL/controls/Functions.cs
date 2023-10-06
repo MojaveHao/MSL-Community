@@ -12,7 +12,8 @@ namespace MSL.controls
         public static string Get(string path, string customUrl = "")
         {
             string url = "https://api.waheal.top";
-            if (customUrl == "") { if (MainWindow.serverLink != "https://msl.waheal.top") url = MainWindow.serverLink + ":5000"; }
+            //if (customUrl == "") { if (MainWindow.serverLink != "https://msl.waheal.top") url = MainWindow.serverLink + "/api"; }
+            if (customUrl == "") { if (MainWindow.serverLink != "https://msl.waheal.top") url = MainWindow.serverLink; }
             else url = customUrl;
             WebClient webClient = new WebClient
             {
@@ -25,7 +26,8 @@ namespace MSL.controls
         public static string Post(string path, int contentType = 0, string parameterData = "", string customUrl = "")
         {
             string url = "https://api.waheal.top";
-            if (customUrl == "") { if (MainWindow.serverLink != "https://msl.waheal.top") url = MainWindow.serverLink + ":5000"; }
+            //if (customUrl == "") { if (MainWindow.serverLink != "https://msl.waheal.top") url = MainWindow.serverLink + "/api"; }
+            if (customUrl == "") { if (MainWindow.serverLink != "https://msl.waheal.top") url = MainWindow.serverLink; }
             else url = customUrl;
             HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(url + "/" + path);
             byte[] buf = Encoding.GetEncoding("UTF-8").GetBytes(parameterData);
