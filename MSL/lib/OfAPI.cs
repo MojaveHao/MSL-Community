@@ -1,15 +1,18 @@
-﻿using MSL.controls;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Windows;
+using MSL.controls;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace MSL.OfAPI
+namespace MSL.lib
 {
-    class baseReturn
+    namespace OfAPI
+    {
+        class baseReturn
     {
         public bool flag { get; set; }
         public string msg { get; set; }
@@ -123,9 +126,10 @@ namespace MSL.OfAPI
 
     class APIControl
     {
-        public Dictionary<string, string> GetUserNodes(string id, string auth, System.Windows.Window window)
+        public Dictionary<string, string> GetUserNodes(string id, string auth, Window window)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getUserProxies");
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getUserProxies");
             request.Method = "POST";
             request.ContentType = "application/json";
             request.Headers.Add("Authorization", auth);
@@ -133,7 +137,7 @@ namespace MSL.OfAPI
             {
                 session = id
             };
-            string json = JsonConvert.SerializeObject(userinfo);//转换json格式
+            string json = JsonConvert.SerializeObject(userinfo); //转换json格式
             byte[] byteArray = Encoding.UTF8.GetBytes(json);
             request.ContentLength = byteArray.Length;
             Stream dataStream = request.GetRequestStream();
@@ -146,13 +150,14 @@ namespace MSL.OfAPI
                 StreamReader reader = new StreamReader(dataStream);
                 string responseMessage = reader.ReadToEnd();
                 Dictionary<string, string> Nodes = new Dictionary<string, string>();
-                JObject jo = (JObject)JsonConvert.DeserializeObject(responseMessage);                
+                JObject jo = (JObject)JsonConvert.DeserializeObject(responseMessage);
                 JArray jArray = JArray.Parse(jo["data"]["list"].ToString());
                 foreach (JToken node in jArray)
                 {
                     Nodes.Add(node["proxyName"].ToString(), node["id"].ToString());
                     _ = DialogShow.ShowMsg(window, node["proxyName"].ToString(), node["id"].ToString());
                 }
+
                 return Nodes;
             }
             catch (WebException ex)
@@ -168,13 +173,15 @@ namespace MSL.OfAPI
                         }
                     }
                 }
+
                 return null;
             }
         }
 
-        public string GetUserNodeId(string id, string auth, string name, System.Windows.Window window)
+        public string GetUserNodeId(string id, string auth, string name, Window window)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getUserProxies");
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getUserProxies");
             request.Method = "POST";
             request.ContentType = "application/json";
             request.Headers.Add("Authorization", auth);
@@ -182,7 +189,7 @@ namespace MSL.OfAPI
             {
                 session = id
             };
-            string json = JsonConvert.SerializeObject(userinfo);//转换json格式
+            string json = JsonConvert.SerializeObject(userinfo); //转换json格式
             byte[] byteArray = Encoding.UTF8.GetBytes(json);
             request.ContentLength = byteArray.Length;
             Stream dataStream = request.GetRequestStream();
@@ -216,6 +223,7 @@ namespace MSL.OfAPI
                     }
                     //else _ = DialogShow.ShowMsg(window, "node[proxyName] = null", "debug");
                 }
+
                 reader.Close();
                 dataStream.Close();
                 response.Close();
@@ -234,13 +242,15 @@ namespace MSL.OfAPI
                         }
                     }
                 }
+
                 return null;
             }
         }
 
-        public (Dictionary<string, string>, JArray) GetNodeList(string id, string auth, System.Windows.Window window)
+        public (Dictionary<string, string>, JArray) GetNodeList(string id, string auth, Window window)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getNodeList");
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getNodeList");
             request.Method = "POST";
             request.ContentType = "application/json";
             request.Headers.Add("Authorization", auth);
@@ -248,7 +258,7 @@ namespace MSL.OfAPI
             {
                 session = id
             };
-            string json = JsonConvert.SerializeObject(userinfo);//转换json格式
+            string json = JsonConvert.SerializeObject(userinfo); //转换json格式
             byte[] byteArray = Encoding.UTF8.GetBytes(json);
             request.ContentLength = byteArray.Length;
             Stream dataStream = request.GetRequestStream();
@@ -265,22 +275,25 @@ namespace MSL.OfAPI
                 var jArray = JArray.Parse(jo["data"]["list"].ToString());
                 foreach (var node in jArray)
                 {
-                    if (node["port"].ToString() != "您无权查询此节点的地址" && Convert.ToInt16(node["status"]) == 200 && !Convert.ToBoolean(node["fullyLoaded"]))
+                    if (node["port"].ToString() != "您无权查询此节点的地址" && Convert.ToInt16(node["status"]) == 200 &&
+                        !Convert.ToBoolean(node["fullyLoaded"]))
                     {
                         string[] targetGroup = node["group"].ToString().Split(';');
                         string nodename = "";
                         if (node["comments"].ToString() == "")
                         {
                             nodename = $"{node["name"]}";
-                            
+
                         }
                         else
                         {
                             nodename = $"[{node["comments"]}]{node["name"]}";
-                        }                        
+                        }
+
                         Nodes.Add(nodename, node["id"].ToString());
                     }
                 }
+
                 reader.Close();
                 dataStream.Close();
                 response.Close();
@@ -299,11 +312,12 @@ namespace MSL.OfAPI
                         }
                     }
                 }
+
                 return (null, null);
             }
         }
 
-        public void UserSign(string id, string auth, System.Windows.Window window)
+        public void UserSign(string id, string auth, Window window)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/userSign");
             request.Method = "POST";
@@ -313,7 +327,7 @@ namespace MSL.OfAPI
             {
                 session = id
             };
-            string json = JsonConvert.SerializeObject(userinfo);//转换json格式用于登录API
+            string json = JsonConvert.SerializeObject(userinfo); //转换json格式用于登录API
             byte[] byteArray = Encoding.UTF8.GetBytes(json);
             request.ContentLength = byteArray.Length;
             Stream dataStream = request.GetRequestStream();
@@ -325,21 +339,27 @@ namespace MSL.OfAPI
                 dataStream = response.GetResponseStream();
                 StreamReader reader = new StreamReader(dataStream);
                 string responseMessage = reader.ReadToEnd();
-                if (JsonConvert.DeserializeObject<LoginMessage>(responseMessage) != null && JsonConvert.DeserializeObject<LoginMessage>(responseMessage).flag)
+                if (JsonConvert.DeserializeObject<LoginMessage>(responseMessage) != null &&
+                    JsonConvert.DeserializeObject<LoginMessage>(responseMessage).flag)
                 {
-                    _ = DialogShow.ShowMsg(window, JsonConvert.DeserializeObject<LoginMessage>(responseMessage).data, "签到成功");
+                    _ = DialogShow.ShowMsg(window, JsonConvert.DeserializeObject<LoginMessage>(responseMessage).data,
+                        "签到成功");
                 }
                 else
                 {
                     _ = DialogShow.ShowMsg(window, "签到失败", "签到失败");
                 }
             }
-            catch (Exception ex) { _ = DialogShow.ShowMsg(window, "签到失败,产生的错误:\n" + ex.Message, "签到失败"); }
+            catch (Exception ex)
+            {
+                _ = DialogShow.ShowMsg(window, "签到失败,产生的错误:\n" + ex.Message, "签到失败");
+            }
         }
 
-        public UserData GetUserInfo(string id, string auth, System.Windows.Window window)
+        public UserData GetUserInfo(string id, string auth, Window window)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getUserInfo");
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/getUserInfo");
             request.Method = "POST";
             request.ContentType = "application/json";
             request.Headers.Add("Authorization", auth);
@@ -347,7 +367,7 @@ namespace MSL.OfAPI
             {
                 session = id
             };
-            string json = JsonConvert.SerializeObject(userinfo);//转换json格式用于登录API
+            string json = JsonConvert.SerializeObject(userinfo); //转换json格式用于登录API
             byte[] byteArray = Encoding.UTF8.GetBytes(json);
             request.ContentLength = byteArray.Length;
             Stream dataStream = request.GetRequestStream();
@@ -374,6 +394,7 @@ namespace MSL.OfAPI
                 {
                     UserSign(id, auth, window);
                 }
+
                 reader.Close();
                 dataStream.Close();
                 response.Close();
@@ -392,11 +413,12 @@ namespace MSL.OfAPI
                         }
                     }
                 }
+
                 return null;
             }
         }
 
-        public (UserwithSessionID, string) Login(string account, string password, System.Windows.Window window)
+        public (UserwithSessionID, string) Login(string account, string password, Window window)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/user/login");
             request.Method = "POST";
@@ -406,7 +428,7 @@ namespace MSL.OfAPI
                 user = account,
                 password = password
             };
-            string json = JsonConvert.SerializeObject(logininfo);//转换json格式用于登录API
+            string json = JsonConvert.SerializeObject(logininfo); //转换json格式用于登录API
             byte[] byteArray = Encoding.UTF8.GetBytes(json);
             request.ContentLength = byteArray.Length;
             Stream dataStream = request.GetRequestStream();
@@ -453,13 +475,16 @@ namespace MSL.OfAPI
                         }
                     }
                 }
+
                 return (null, null);
             }
         }
 
-        public (LoginMessage, string) CreateProxy(string id, string auth, string type, string port, bool EnableZip, int nodeid, JArray jArray, System.Windows.Window window)
+        public (LoginMessage, string) CreateProxy(string id, string auth, string type, string port, bool EnableZip,
+            int nodeid, JArray jArray, Window window)
         {
             #region 获取节点端口限制
+
             (int, int) remote_port_limit = (10000, 99999);
             foreach (var node in jArray)
             {
@@ -468,20 +493,28 @@ namespace MSL.OfAPI
                     try
                     {
                         var s = node["allowPort"].ToString().Trim('(', ')', ' ');
-                        remote_port_limit = ValueTuple.Create(Array.ConvertAll(s.Split(','), int.Parse)[0], Array.ConvertAll(s.Split(','), int.Parse)[1]);
+                        remote_port_limit = ValueTuple.Create(Array.ConvertAll(s.Split(','), int.Parse)[0],
+                            Array.ConvertAll(s.Split(','), int.Parse)[1]);
                     }
-                    catch { remote_port_limit = (10000, 99999); }
+                    catch
+                    {
+                        remote_port_limit = (10000, 99999);
+                    }
+
                     break;
                 }
             }
+
             #endregion
+
             bool input_name = DialogShow.ShowInput(window, "隧道名称(不支持中文)", out string proxy_name);
             Random random = new Random();
             string remote_port;
             remote_port = random.Next(remote_port_limit.Item1, remote_port_limit.Item2).ToString();
             if (input_name)
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/newProxy");
+                HttpWebRequest request =
+                    (HttpWebRequest)WebRequest.Create("https://of-dev-api.bfsea.xyz/frp/api/newProxy");
                 request.Method = "POST";
                 request.ContentType = "application/json";
                 request.Headers.Add("Authorization", auth);
@@ -502,7 +535,7 @@ namespace MSL.OfAPI
                     request_from = "",
                     request_pass = "",
                     custom = ""
-                });//转换json格式
+                }); //转换json格式
                 byte[] byteArray = Encoding.UTF8.GetBytes(json);
                 request.ContentLength = byteArray.Length;
                 Stream dataStream = request.GetRequestStream();
@@ -542,6 +575,7 @@ namespace MSL.OfAPI
                             }
                         }
                     }
+
                     return (null, null);
                 }
             }
@@ -552,5 +586,5 @@ namespace MSL.OfAPI
             }
         }
     }
-
+    }
 }

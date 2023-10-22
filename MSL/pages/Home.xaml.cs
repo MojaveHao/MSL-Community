@@ -1,21 +1,20 @@
-﻿using MSL.controls;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using MessageBox = System.Windows.MessageBox;
+using MSL.controls;
+using MSL.forms;
+using Newtonsoft.Json.Linq;
 
 namespace MSL.pages
 {
     /// <summary>
     /// Home.xaml 的交互逻辑
     /// </summary>
-    public partial class Home : System.Windows.Controls.Page
+    public partial class Home : Page
     {
         public static event DeleControl AutoOpenServer;
         public static event DeleControl GotoFrpcEvent;
@@ -81,7 +80,7 @@ namespace MSL.pages
                         {
                             Dispatcher.Invoke(() =>
                             {
-                                var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
+                                var mainwindow = (MainWindow)Window.GetWindow(this);
                                 _ = DialogShow.ShowMsg(mainwindow, noticeLabText, "公告", false, "确定");
                             });
                         }
@@ -348,8 +347,8 @@ namespace MSL.pages
             }
             if (startServerDropdown.SelectedIndex == -1)
             {
-                var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
-                System.Windows.Window wn = new forms.CreateServer
+                var mainwindow = (MainWindow)Window.GetWindow(this);
+                Window wn = new CreateServer
                 {
                     Owner = mainwindow
                 };

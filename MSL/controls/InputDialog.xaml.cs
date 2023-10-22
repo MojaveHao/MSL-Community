@@ -1,14 +1,16 @@
 ﻿using System.Windows;
+using Window = HandyControl.Controls.Window;
+
 namespace MSL.controls
 {
     /// <summary>
     /// MessageDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class InputDialog : HandyControl.Controls.Window
+    public partial class InputDialog : Window
     {
         public static bool _dialogReturn;
         public static string _textReturn;
-        public InputDialog(Window window, string dialogText, string textboxText)
+        public InputDialog(System.Windows.Window window, string dialogText, string textboxText)
         {
             InitializeComponent();
             MaxHeight = window.ActualHeight;

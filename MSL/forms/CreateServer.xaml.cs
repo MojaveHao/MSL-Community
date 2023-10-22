@@ -1,10 +1,4 @@
-﻿using HandyControl.Controls;
-using ICSharpCode.SharpZipLib.Zip;
-using MSL.controls;
-using MSL.pages;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,17 +12,22 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Threading;
+using HandyControl.Controls;
+using ICSharpCode.SharpZipLib.Zip;
+using MSL.controls;
+using MSL.pages;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
-using Path = System.IO.Path;
+using Window = HandyControl.Controls.Window;
 
 namespace MSL.forms
 {
     /// <summary>
     /// CreateServer.xaml 的交互逻辑
     /// </summary>
-    public partial class CreateServer : HandyControl.Controls.Window
+    public partial class CreateServer : Window
     {
         string DownjavaName;
 

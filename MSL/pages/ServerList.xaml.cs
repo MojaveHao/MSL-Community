@@ -1,8 +1,4 @@
-﻿using HandyControl.Controls;
-using Microsoft.VisualBasic.FileIO;
-using MSL.controls;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,10 +7,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
+using HandyControl.Controls;
+using Microsoft.VisualBasic.FileIO;
+using MSL.controls;
+using MSL.forms;
+using Newtonsoft.Json.Linq;
 using MessageBox = System.Windows.Forms.MessageBox;
-using MessageDialog = MSL.controls.MessageDialog;
-using RoutedEventArgs = System.Windows.RoutedEventArgs;
 using Window = System.Windows.Window;
 
 namespace MSL.pages
@@ -88,7 +86,7 @@ namespace MSL.pages
 
         private void addServer_Click(object sender, RoutedEventArgs e)
         {
-            forms.CreateServer window = new forms.CreateServer();
+            CreateServer window = new CreateServer();
             var mainwindow = (MainWindow)Window.GetWindow(this);
             window.Owner = mainwindow;
             _ = window.ShowDialog();
@@ -138,7 +136,7 @@ namespace MSL.pages
                     _ = DialogShow.ShowMsg((MainWindow)Window.GetWindow(this), "开服器检测到配置文件出现了错误，是第一次使用吗？\n是否创建一个新的服务器？", "警告", true, "取消");
                     if (MessageDialog._dialogReturn == true)
                     {
-                        Window wn = new forms.CreateServer
+                        Window wn = new CreateServer
                         {
                             Owner = (MainWindow)Window.GetWindow(this)
                         };

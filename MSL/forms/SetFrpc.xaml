@@ -4,8 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:hc="https://handyorg.github.io/handycontrol"
-        xmlns:controls="clr-namespace:MSL.controls"
-        xmlns:local="clr-namespace:MSL"
         mc:Ignorable="d"
         NonClientAreaBackground="{DynamicResource SideMenuBrush}"
         Title="MSLCommunity/Frpc设置" Height="450" Width="750" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Background="{DynamicResource BackgroundBrush}">

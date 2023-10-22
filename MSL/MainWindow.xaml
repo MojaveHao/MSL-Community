@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:hc="https://handyorg.github.io/handycontrol"
-        xmlns:local="clr-namespace:MSL"
         xmlns:controls="clr-namespace:MSL.controls"
         x:Class="MSL.MainWindow"
         mc:Ignorable="d" Width="870" Height="500" MinWidth="870" MinHeight="500" Background="{DynamicResource BackgroundBrush}"

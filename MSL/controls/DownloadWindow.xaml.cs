@@ -1,5 +1,4 @@
-﻿using Downloader;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
@@ -8,13 +7,16 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Downloader;
+using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
+using Window = HandyControl.Controls.Window;
 
 namespace MSL
 {
     /// <summary>
     /// DownloadWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class DownloadWindow : HandyControl.Controls.Window
+    public partial class DownloadWindow : Window
     {
         //DownLoadFile dlf = new DownLoadFile();
         public static int downloadthread = 8;
@@ -210,7 +212,7 @@ namespace MSL
         }
 
         int counter = 0;
-        private void OnDownloadProgressChanged(object sender, Downloader.DownloadProgressChangedEventArgs e)
+        private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             if (counter <= 200)
             {

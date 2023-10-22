@@ -1,10 +1,11 @@
 ﻿using HandyControl.Controls;
+using Window = System.Windows.Window;
 
 namespace MSL.controls
 {
     public class DialogShow
     {
-        public static bool ShowMsg(System.Windows.Window window, string dialogText, string dialogTitle, bool primaryBtnVisible = false, string closeText = "确定", string primaryText = "确定")
+        public static bool ShowMsg(Window window, string dialogText, string dialogTitle, bool primaryBtnVisible = false, string closeText = "确定", string primaryText = "确定")
         {
             try
             {
@@ -32,7 +33,7 @@ namespace MSL.controls
                 return false;
             }
         }
-        public static bool ShowInput(System.Windows.Window window, string dialogText, out string userInput, string textboxText = "")
+        public static bool ShowInput(Window window, string dialogText, out string userInput, string textboxText = "")
         {
             userInput = string.Empty;
             try
@@ -62,7 +63,7 @@ namespace MSL.controls
             }
         }
 
-        public static bool ShowDownload(System.Windows.Window window, string downloadurl, string downloadPath, string filename, string downloadinfo)
+        public static bool ShowDownload(Window window, string downloadurl, string downloadPath, string filename, string downloadinfo)
         {
             try
             {

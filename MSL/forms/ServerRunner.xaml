@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:controls="clr-namespace:MSL.controls"
-        xmlns:local="clr-namespace:MSL"
         mc:Ignorable="d"
         Title="ServerRunner" Height="500" Width="800" MinHeight="500" MinWidth="800" Icon="../icon.ico"
         Loaded="Window_Loaded" Closing="Window_Closing" Activated="Window_Activated" Deactivated="Window_Deactivated" SizeChanged="Window_SizeChanged"
@@ -152,14 +151,17 @@
                         <Button x:Name="sendcmd" Content="发送" Style="{StaticResource ButtonPrimary}" HorizontalAlignment="Right" Margin="0,0,67,10" VerticalAlignment="Bottom" Click="sendcmd_Click" FontWeight="Normal" Visibility="Visible" FontSize="12" Height="32" Width="58" IsEnabled="False"/>
                         <Button x:Name="controlServer" Content="开服" Margin="0,0,10,10" VerticalAlignment="Bottom" Height="32" Click="controlServer_Click" MouseDoubleClick="controlServer_MouseDoubleClick" Width="52" HorizontalAlignment="Right"/>
                         <ComboBox x:Name="fastCMD" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" SelectedIndex="0" IsEnabled="False" Width="104" Height="32">
-                            <ComboBoxItem Content="/（指令）" FontFamily="Microsoft YaHei UI"/>
-                            <ComboBoxItem Content="/op（给管理员）" FontFamily="Microsoft YaHei UI"/>
-                            <ComboBoxItem Content="/deop（去除管理员）" FontFamily="Microsoft YaHei UI"/>
-                            <ComboBoxItem Content="/ban（封禁玩家）" FontFamily="Microsoft YaHei UI"/>
-                            <ComboBoxItem Content="/say（全服说话）" FontFamily="Microsoft YaHei UI"/>
-                            <ComboBoxItem Content="/pardon（解除封禁）" FontFamily="Microsoft YaHei UI"/>
+                            <ComboBoxItem Content="/" FontFamily="Microsoft YaHei UI"/>
+                            <ComboBoxItem Content="/op" FontFamily="Microsoft YaHei UI"/>
+                            <ComboBoxItem Content="/deop" FontFamily="Microsoft YaHei UI"/>
+                            <ComboBoxItem Content="/ban" FontFamily="Microsoft YaHei UI"/>
+                            <ComboBoxItem Content="/say" FontFamily="Microsoft YaHei UI"/>
+                            <ComboBoxItem Content="/pardon" FontFamily="Microsoft YaHei UI"/>
                         </ComboBox>
-                        <TextBox x:Name="cmdtext" Margin="114,0,125,10" Text="服务器已关闭" KeyDown="cmdtext_KeyDown" Visibility="Visible" IsEnabled="False" VerticalAlignment="Bottom" MaxLines="1" KeyUp="cmdtext_KeyUp" Height="32"/>
+                        <Grid x:Name="CommonInput" Visibility="Visible">
+                            <TextBox x:Name="cmdtext" Margin="114,0,125,10" Text="服务器已关闭" KeyDown="cmdtext_KeyDown" Visibility="Visible" IsEnabled="False" VerticalAlignment="Bottom" MaxLines="1" KeyUp="cmdtext_KeyUp" Height="32"/>
+                        </Grid>
+                        
                     </Grid>
                 </TabItem>
                 <TabItem Header="服务器插件/MOD" Background="{DynamicResource SideMenuBrush}">

@@ -1,15 +1,15 @@
 ﻿using System.Windows;
-using System.Windows.Media.Animation;
+using Window = HandyControl.Controls.Window;
 
 namespace MSL.controls
 {
     /// <summary>
     /// MessageDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class MessageDialog : HandyControl.Controls.Window
+    public partial class MessageDialog : Window
     {
         public static bool _dialogReturn;
-        public MessageDialog(Window window, string dialogText, string dialogTitle, bool primaryBtnVisible, string closeText, string primaryText)
+        public MessageDialog(System.Windows.Window window, string dialogText, string dialogTitle, bool primaryBtnVisible, string closeText, string primaryText)
         {
             InitializeComponent();
             MaxHeight = window.ActualHeight;

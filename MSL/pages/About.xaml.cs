@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Security.Principal;
 using System.Windows.Controls;
 
@@ -12,8 +13,8 @@ namespace MSL.pages
         public About()
         {
             InitializeComponent();
-            AppVersionLab.Content += string.Format("(msl v{0}-community)", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            Hash.Text += System.Reflection.Assembly.GetExecutingAssembly().GetHashCode().ToString();
+            AppVersionLab.Content += string.Format("(msl v{0}-community)", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            Hash.Text += Assembly.GetExecutingAssembly().GetHashCode().ToString();
             OSVersion.Text += Environment.OSVersion.ToString();
             CurrentPath.Text += Environment.CurrentDirectory.ToString();
             dotNetVersion.Text += Environment.Version.ToString();

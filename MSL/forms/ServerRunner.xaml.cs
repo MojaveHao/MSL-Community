@@ -1,16 +1,12 @@
-﻿using HandyControl.Controls;
-using ICSharpCode.SharpZipLib.Zip;
-using Microsoft.Win32;
-using MSL.controls;
-using MSL.pages;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -18,12 +14,21 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using HandyControl.Controls;
+using HandyControl.Data;
+using ICSharpCode.SharpZipLib.Zip;
+using MSL.controls;
+using MSL.pages;
+using Newtonsoft.Json.Linq;
+using Button = System.Windows.Controls.Button;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using ListViewItem = System.Windows.Controls.ListViewItem;
 using MessageBox = System.Windows.MessageBox;
-using Path = System.IO.Path;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using Window = System.Windows.Window;
 
 namespace MSL
@@ -92,7 +97,7 @@ namespace MSL
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             try
             {
@@ -1714,7 +1719,7 @@ namespace MSL
             foreach (IPAddress localIP in localIPs)
             {
                 // 检查IPv4地址是否为公网IP
-                if (localIP.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
+                if (localIP.AddressFamily == AddressFamily.InterNetwork &&
                     !IPAddress.IsLoopback(localIP) &&
                     !Regex.IsMatch(localIP.ToString(), privateIpPattern))
                 {
@@ -1996,7 +2001,7 @@ namespace MSL
                     di.Delete(true);
                     Directory.CreateDirectory(Rserverbase + @"\" + gameWorldText.Text);
                 }
-                System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog
+                FolderBrowserDialog dialog = new FolderBrowserDialog
                 {
                     Description = "请选择地图文件夹(或解压后的文件夹)"
                 };
@@ -2801,7 +2806,7 @@ namespace MSL
         }
         private void a0_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog
+            FolderBrowserDialog dialog = new FolderBrowserDialog
             {
                 Description = "请选择文件夹"
             };
@@ -2893,7 +2898,7 @@ namespace MSL
                 useJVMself.IsChecked = true;
             }
         }
-        private void memorySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<HandyControl.Data.DoubleRange> e)
+        private void memorySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<DoubleRange> e)
         {
             memoryInfo.Text = "最小:" + memorySlider.ValueStart.ToString("f0") + "M," + "最大:" + memorySlider.ValueEnd.ToString("f0") + "M";
         }
@@ -2909,8 +2914,8 @@ namespace MSL
                         {
                             string a = memoryInfo.Text.Substring(0, memoryInfo.Text.IndexOf(","));
                             string b = memoryInfo.Text.Substring(memoryInfo.Text.IndexOf(","));
-                            string resultA = System.Text.RegularExpressions.Regex.Replace(a, @"[^0-9]+", "");
-                            string resultB = System.Text.RegularExpressions.Regex.Replace(b, @"[^0-9]+", "");
+                            string resultA = Regex.Replace(a, @"[^0-9]+", "");
+                            string resultB = Regex.Replace(b, @"[^0-9]+", "");
                             memorySlider.ValueStart = double.Parse(resultA);
                             memorySlider.ValueEnd = double.Parse(resultB);
                         }

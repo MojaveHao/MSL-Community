@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:hc="https://handyorg.github.io/handycontrol">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Storyboard x:Key="ShowPage">
         <DoubleAnimationUsingKeyFrames BeginTime="0:0:0" Duration="0:0:0.7" Storyboard.TargetProperty="Opacity">
             <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />

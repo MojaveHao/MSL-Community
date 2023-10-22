@@ -1,9 +1,4 @@
-﻿using HandyControl.Controls;
-using MSL.controls;
-using MSL.OfAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,15 +7,19 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
+using HandyControl.Controls;
+using MSL.controls;
+using MSL.lib.OfAPI;
+using Newtonsoft.Json.Linq;
 using MessageBox = System.Windows.MessageBox;
+using Window = HandyControl.Controls.Window;
 
 namespace MSL
 {
     /// <summary>
     /// SetFrpc.xaml 的交互逻辑
     /// </summary>
-    public partial class SetFrpc : HandyControl.Controls.Window
+    public partial class SetFrpc : Window
     {
         readonly List<string> list1 = new List<string>();
         readonly List<string> list2 = new List<string>();

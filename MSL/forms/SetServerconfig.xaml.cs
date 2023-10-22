@@ -1,14 +1,16 @@
-﻿using MSL.controls;
-using System;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using MSL.controls;
+using Window = HandyControl.Controls.Window;
 
 namespace MSL
 {
     /// <summary>
     /// SetServerconfig.xaml 的交互逻辑
     /// </summary>
-    public partial class SetServerconfig : HandyControl.Controls.Window
+    public partial class SetServerconfig : Window
     {
         bool nosafeClose = false;
         public static string serverbase;
@@ -50,7 +52,7 @@ namespace MSL
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             if (nosafeClose == false)
             {

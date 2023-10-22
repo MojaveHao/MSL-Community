@@ -1,7 +1,4 @@
-﻿using MSL.controls;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,15 +9,17 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
-using File = System.IO.File;
+using MSL.controls;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Window = HandyControl.Controls.Window;
 
 namespace MSL.pages
 {
     /// <summary>
     /// DownloadServer.xaml 的交互逻辑
     /// </summary>
-    public partial class DownloadServer : HandyControl.Controls.Window
+    public partial class DownloadServer : Window
     {
         //public static event DeleControl DownComplete;
         //List<string> serverurl = new List<string>();

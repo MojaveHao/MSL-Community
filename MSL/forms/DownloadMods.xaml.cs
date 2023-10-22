@@ -1,7 +1,6 @@
-﻿using CurseForge.APIClient.Models.Mods;
-using MSL.controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -10,14 +9,18 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using CurseForge.APIClient;
+using CurseForge.APIClient.Models.Mods;
+using MSL.controls;
 using MessageBox = System.Windows.MessageBox;
+using Window = HandyControl.Controls.Window;
 
 namespace MSL
 {
     /// <summary>
     /// DownloadMods.xaml 的交互逻辑
     /// </summary>
-    public partial class DownloadMods : HandyControl.Controls.Window
+    public partial class DownloadMods : Window
     {
         string Url;
         string Dir;
@@ -62,7 +65,7 @@ namespace MSL
                 int index = token.IndexOf("\r\n");
                 string _token = token.Substring(0, index);
                 //string _email = token.Substring(index + 2);
-                var cfApiClient = new CurseForge.APIClient.ApiClient(_token);
+                var cfApiClient = new ApiClient(_token);
                 if (loadType == 0)
                 {
                     var featuredMods = await cfApiClient.GetFeaturedModsAsync(new GetFeaturedModsRequestBody
@@ -272,7 +275,7 @@ namespace MSL
                 int index = token.IndexOf("\r\n");
                 string _token = token.Substring(0, index);
                 //string _email = token.Substring(index + 2);
-                var cfApiClient = new CurseForge.APIClient.ApiClient(_token);
+                var cfApiClient = new ApiClient(_token);
                 var searchedMods = await cfApiClient.SearchModsAsync(432, null, null, null, textBox1.Text);
                 backList.Clear();
                 listBox.Items.Clear();
@@ -381,7 +384,7 @@ namespace MSL
                         string _token = token.Substring(0, index);
                         //string _email = token.Substring(index + 2);
 
-                        var cfApiClient = new CurseForge.APIClient.ApiClient(_token);
+                        var cfApiClient = new ApiClient(_token);
                         var selectedModId = modIds[listBox.SelectedIndex];
                         var modFiles = await cfApiClient.GetModFilesAsync(selectedModId);
 
@@ -517,7 +520,7 @@ namespace MSL
             listBoxColumnName.Header = "模组列表（双击获取该模组的版本）：";
         }
 
-        private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void window_Closing(object sender, CancelEventArgs e)
         {
             listBox.Items.Clear();
             modIds.Clear();

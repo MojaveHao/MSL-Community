@@ -1,28 +1,29 @@
-﻿using HandyControl.Controls;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using HandyControl.Controls;
 using HandyControl.Themes;
 using Microsoft.Win32;
 using MSL.controls;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-//using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using MessageBox = System.Windows.MessageBox;
-using MessageDialog = MSL.controls.MessageDialog;
+using Window = System.Windows.Window;
+//using System.Runtime.InteropServices;
 
 namespace MSL.pages
 {
     /// <summary>
     /// SettingsPage.xaml 的交互逻辑
     /// </summary>
-    public partial class SettingsPage : System.Windows.Controls.Page
+    public partial class SettingsPage : Page
     {
         public static event DeleControl C_NotifyIcon;
         public static event DeleControl ChangeSkinStyle;
@@ -38,7 +39,7 @@ namespace MSL.pages
         }
         private void setdefault_Click(object sender, RoutedEventArgs e)
         {
-            var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
+            var mainwindow = (MainWindow)Window.GetWindow(this);
             _ = DialogShow.ShowMsg(mainwindow, "恢复默认设置会清除MSL文件夹内的所有文件，请您谨慎选择！", "警告", true, "取消");
             if (!MessageDialog._dialogReturn)
             {
@@ -83,11 +84,11 @@ namespace MSL.pages
                 C_NotifyIcon();
                 try
                 {
-                    string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                    string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                     JObject jobject = JObject.Parse(jsonString);
                     jobject["notifyIcon"] = "True";
                     string convertString = Convert.ToString(jobject);
-                    File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                    File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                     Growl.Success("打开成功");
                     return;
                 }
@@ -220,20 +221,20 @@ namespace MSL.pages
                     openserversOnStart.IsChecked = false;
                     return;
                 }
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoOpenServer"] = openserversOnStartList.Text;
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("开启成功！");
             }
             else
             {
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoOpenServer"] = "False";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("关闭成功！");
             }
         }
@@ -242,20 +243,20 @@ namespace MSL.pages
         {
             if (openfrpOnStart.IsChecked == true)
             {
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoOpenFrpc"] = "True";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("开启成功！");
             }
             else
             {
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoOpenFrpc"] = "False";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("关闭成功！");
             }
         }
@@ -317,21 +318,21 @@ namespace MSL.pages
         {
             if (autoGetPlayerInfo.IsChecked == true)
             {
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoGetPlayerInfo"] = "True";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("开启成功！");
                 MainWindow.getPlayerInfo = true;
             }
             else
             {
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoGetPlayerInfo"] = "False";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("关闭成功！");
                 MainWindow.getPlayerInfo = false;
             }
@@ -341,21 +342,21 @@ namespace MSL.pages
         {
             if (autoGetServerInfo.IsChecked == true)
             {
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoGetServerInfo"] = "True";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("开启成功！");
                 MainWindow.getServerInfo = true;
             }
             else
             {
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoGetServerInfo"] = "False";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("关闭成功！");
                 MainWindow.getServerInfo = false;
             }
@@ -454,7 +455,7 @@ namespace MSL.pages
 
         private void paintedEgg_Click(object sender, RoutedEventArgs e)
         {
-            var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
+            var mainwindow = (MainWindow)Window.GetWindow(this);
             bool dialog = DialogShow.ShowMsg(mainwindow, "点击此按钮后软件出现任何问题作者概不负责，你确定要继续吗？\n（光敏性癫痫警告！若您患有光敏性癫痫，请不要点击确定！）", "警告", true, "取消");
             if (dialog)
             {
@@ -465,46 +466,46 @@ namespace MSL.pages
         }
         void PaintedEgg()
         {
-            System.Windows.Window mainwindow = null;
+            Window mainwindow = null;
             Dispatcher.Invoke(new Action(delegate
             {
-                mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
+                mainwindow = (MainWindow)Window.GetWindow(this);
             }));
             while (true)
             {
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    mainwindow.Background = System.Windows.Media.Brushes.LightBlue;
+                    mainwindow.Background = Brushes.LightBlue;
                     BrushConverter brushConverter = new BrushConverter();
-                    ThemeManager.Current.AccentColor = (System.Windows.Media.Brush)brushConverter.ConvertFromString("#0078D4");
+                    ThemeManager.Current.AccentColor = (Brush)brushConverter.ConvertFromString("#0078D4");
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Red;
+                    ThemeManager.Current.AccentColor = Brushes.Red;
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    mainwindow.Background = System.Windows.Media.Brushes.LightGreen;
-                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Green;
+                    mainwindow.Background = Brushes.LightGreen;
+                    ThemeManager.Current.AccentColor = Brushes.Green;
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    mainwindow.Background = System.Windows.Media.Brushes.LightYellow;
-                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Orange;
+                    mainwindow.Background = Brushes.LightYellow;
+                    ThemeManager.Current.AccentColor = Brushes.Orange;
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.Purple;
+                    ThemeManager.Current.AccentColor = Brushes.Purple;
                 }));
                 Thread.Sleep(200);
                 Dispatcher.Invoke(new Action(delegate
                 {
-                    mainwindow.Background = System.Windows.Media.Brushes.LightPink;
-                    ThemeManager.Current.AccentColor = System.Windows.Media.Brushes.DeepPink;
+                    mainwindow.Background = Brushes.LightPink;
+                    ThemeManager.Current.AccentColor = Brushes.DeepPink;
                 }));
                 Thread.Sleep(200);
             }
@@ -512,7 +513,7 @@ namespace MSL.pages
 
         private void changeBackImg_Click(object sender, RoutedEventArgs e)
         {
-            var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
+            var mainwindow = (MainWindow)Window.GetWindow(this);
             OpenFileDialog openfile = new OpenFileDialog
             {
                 InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
@@ -571,13 +572,13 @@ namespace MSL.pages
                 // 如果启动项中不存在该应用程序，则添加该应用程序
                 if (regKey.GetValue("Minecraft Server Launcher") == null)
                 {
-                    regKey.SetValue("Minecraft Server Launcher", System.Reflection.Assembly.GetExecutingAssembly().Location);
+                    regKey.SetValue("Minecraft Server Launcher", Assembly.GetExecutingAssembly().Location);
                 }
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoRunApp"] = "True";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
             }
             else
             {
@@ -589,31 +590,31 @@ namespace MSL.pages
                 {
                     regKey.DeleteValue("Minecraft Server Launcher");
                 }
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoRunApp"] = "False";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
             }
         }
         private void autoUpdateApp_Click(object sender, RoutedEventArgs e)
         {
             if (autoUpdateApp.IsChecked == true)
             {
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoUpdateApp"] = "True";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("开启成功！");
             }
             else
             {
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["autoUpdateApp"] = "False";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
                 Growl.Success("关闭成功！");
             }
         }
@@ -630,7 +631,7 @@ namespace MSL.pages
                 byte[] pageData = MyWebClient.DownloadData(serverLink + @"/msl/update.txt");
                 string pageHtml = Encoding.UTF8.GetString(pageData);
                 */
-                var mainwindow = (MainWindow)System.Windows.Window.GetWindow(this);
+                var mainwindow = (MainWindow)Window.GetWindow(this);
                 string pageHtml = Functions.Get("update");
                 string strtempa = "#";
                 int IndexofA = pageHtml.IndexOf(strtempa);
@@ -641,7 +642,7 @@ namespace MSL.pages
                     aaa = aaa.Replace("v", "");
                 }
                 Version newVersion = new Version(aaa);
-                Version version = new Version(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                Version version = new Version(Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
                 if (newVersion > version)
                 {

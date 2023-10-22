@@ -146,7 +146,6 @@
     <Compile Include="controls\MessageDialog.xaml.cs">
       <DependentUpon>MessageDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="controls\OfAPI.cs" />
     <Compile Include="controls\RelayCommand.cs" />
     <Compile Include="controls\TextDialog.xaml.cs">
       <DependentUpon>TextDialog.xaml</DependentUpon>
@@ -158,6 +157,8 @@
     <Compile Include="forms\DownloadMods.xaml.cs">
       <DependentUpon>DownloadMods.xaml</DependentUpon>
     </Compile>
+    <Compile Include="lib\NetworkRequests.cs" />
+    <Compile Include="lib\OfAPI.cs" />
     <Compile Include="pages\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>

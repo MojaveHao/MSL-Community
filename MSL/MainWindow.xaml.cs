@@ -1,20 +1,21 @@
-﻿using HandyControl.Controls;
-using HandyControl.Themes;
-using MSL.controls;
-using MSL.pages;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Threading;
-using Brush = System.Windows.Media.Brush;
+using HandyControl.Controls;
+using HandyControl.Themes;
+using MSL.controls;
+using MSL.pages;
+using Newtonsoft.Json.Linq;
 using MessageBox = System.Windows.MessageBox;
 using Window = System.Windows.Window;
 
@@ -438,7 +439,7 @@ namespace MSL
                         aaa = aaa.Replace("v", "");
                     }
                     Version newVersion = new Version(aaa);
-                    Version version = new Version(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                    Version version = new Version(Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
                     if (newVersion > version)
                     {
@@ -656,7 +657,7 @@ namespace MSL
             return amemory;
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             if (MainNoticyIcon.Visibility == Visibility.Visible)
             {
@@ -791,22 +792,22 @@ namespace MSL
                 sideMenuContextOpen.Width = 100;
                 SideMenu.Width = 100;
                 frame.Margin = new Thickness(100, 0, 0, 0);
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["sidemenu"] = "0";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
             }
             else
             {
                 sideMenuContextOpen.Width = 50;
                 SideMenu.Width = 50;
                 frame.Margin = new Thickness(50, 0, 0, 0);
-                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", System.Text.Encoding.UTF8);
+                string jsonString = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", Encoding.UTF8);
                 JObject jobject = JObject.Parse(jsonString);
                 jobject["sidemenu"] = "1";
                 string convertString = Convert.ToString(jobject);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, System.Text.Encoding.UTF8);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"MSL\config.json", convertString, Encoding.UTF8);
             }
         }
 
@@ -821,7 +822,7 @@ namespace MSL
         }
 
 
-        private void SideMenu_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void SideMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (SideMenu.SelectedIndex)
             {
